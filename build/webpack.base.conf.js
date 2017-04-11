@@ -21,7 +21,7 @@ module.exports = {
     output: {
         path: config.build.assetsRoot,
         filename: umdBuild ? '[name].browser.js' : '[name].common.js',
-        library: 'huodh-vue-plugins',
+        library: 'huodhVuePlugins',
         libraryTarget: umdBuild ? 'umd' : 'commonjs2'
     },
     externals: [nodeExternals()],
