@@ -1,6 +1,6 @@
 <template>
   <transition name="fade-down">
-    <div v-if="available" :class="['modal',this.type]" ref="modalWrapEl" @click="closeModal">
+    <div v-if="available" :class="['modal','huodh-vue-modal',this.type]" ref="modalWrapEl" @click="closeModal">
       <div class="modal-dialog" @click.stop>
         <div class="modal-content">
           <div class="modal-header">
@@ -88,7 +88,7 @@
 <style rel="stylesheet/scss" lang="scss">
   @import "../../scss/import.scss";
 
-  .modal {
+  .modal.huodh-vue-modal {
     display: block;
     .modal-dialog {
       .modal-content {

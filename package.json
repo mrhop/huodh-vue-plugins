@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrhop/huodh-vue-plugins.git"
+    "url": "git+https://github.com/mrhop/huodh-vue-plugins-example.git"
   },
   "keywords": [
     "vue",
