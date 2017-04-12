@@ -1,4 +1,3 @@
-just init
 creat some vue plugins
 ["table",
  "form",
