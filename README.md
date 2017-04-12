@@ -28,6 +28,9 @@ creat some vue plugins
 
  git config --global --unset http.proxy
 
+ //更改git的remote url
+ git remote set-url origin https://github.com/mrhop/XXX.git
+
  npm adduser
  npm publish
  npm unpublish
