@@ -15,8 +15,6 @@ creat some vue plugins
  2.table的后续操作 【title的排序】
  4.form element 遗留，date element,file element 的v-on:change 的处理，不适用v-modal,同时 select 要给出一个X按钮用于清空selected
  5.tab 目前无法包裹vuex-state的数据，这个需要另行设计时考虑
- 3.做一个plugin，将所有这些通用的components放在一起,最后都以function的方式来实现,注意store也要放置在其中
-
 
 
 
