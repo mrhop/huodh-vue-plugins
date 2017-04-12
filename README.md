@@ -11,7 +11,7 @@ creat some vue plugins
 
 
  遗留问题：
- 1.左侧tree 的状态保持，当重新刷新时，使用js  set cookie或者localstore是一个思路
+ 1.tree 的状态保持，当重新刷新时，使用js  set cookie或者localstore是一个思路
  2.table的后续操作 【title的排序】
  4.form element 遗留，date element,file element 的v-on:change 的处理，不适用v-modal,同时 select 要给出一个X按钮用于清空selected
  5.tab 目前无法包裹vuex-state的数据，这个需要另行设计时考虑
