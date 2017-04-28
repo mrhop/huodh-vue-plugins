@@ -58,8 +58,7 @@
     name: 'form-element',
     data () {
       return {
-        elementValue: this.options.defaultValue || (this.options.type === 'checkbox') ? [] : '',
-        defaultValue: this.dataFromParent && this.dataFromParent[this.options.name] ? this.dataFromParent[this.options.name] : (this.options.defaultValue ? this.options.defaultValue : '')
+        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
       }
     },
     props: ['dataFromParent', 'options', 'callback'],
@@ -87,7 +86,7 @@
         this.dealWithData()
       },
       options: function () {
-        this.elementValue = this.options.defaultValue || ''
+        this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
       }
     }
   }
