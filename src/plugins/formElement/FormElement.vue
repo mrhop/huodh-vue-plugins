@@ -58,7 +58,7 @@
     name: 'form-element',
     data () {
       return {
-        elementValue: this.options.defaultValue || '',
+        elementValue: this.options.defaultValue || (this.options.type === 'checkbox') ? [] : '',
         defaultValue: this.dataFromParent && this.dataFromParent[this.options.name] ? this.dataFromParent[this.options.name] : (this.options.defaultValue ? this.options.defaultValue : '')
       }
     },
@@ -98,6 +98,7 @@
   .form-control {
     border: 1px solid #aaa;
   }
+
   .form-element.has-error {
     p {
       margin: 0;
