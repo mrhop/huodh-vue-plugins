@@ -48,6 +48,3 @@ git push -u origin master
  npm unpublish
  node i --no-optional
 
-
- 继续react的学习以及深入，并完成关联对策项目
- 然后部分关联vuejs
