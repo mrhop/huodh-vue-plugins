@@ -17,6 +17,6 @@ export default{
   },
   formSuccess: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)
-    return data.success || ''
+    return data.success || false
   }
 }

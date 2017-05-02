@@ -42,6 +42,6 @@ export default {
     state.dataArray.find(i => i.id === id).error = ''
   },
   [types.REMOVE_FORM_SUCCESS] (state, {id}) {
-    state.dataArray.find(i => i.id === id).success = ''
+    state.dataArray.find(i => i.id === id).success = false
   }
 }

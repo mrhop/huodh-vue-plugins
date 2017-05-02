@@ -32,7 +32,8 @@
     </label>
     <label v-else-if="options.type==='radio' && options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="radio" :name="options.name" :value="selectItem.value" v-model="elementValue" ref="formElementEl"
+      <input type="radio" :name="options.name" :value="selectItem.value" :checked="elementValue === selectItem.value"
+             ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
@@ -43,7 +44,8 @@
     </label>
     <label v-else-if="options.type==='checkbox' && options.locked" class="checkbox-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="checkbox" :name="options.name" :value="selectItem.value" v-model="elementValue" ref="formElementEl"
+      <input type="checkbox" :name="options.name" :checked="elementValue.includes(selectItem.value)"
+             :value="selectItem.value" ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
@@ -86,7 +88,9 @@
         this.dealWithData()
       },
       options: function () {
-        this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
+        if (!this.options.validatedMsg) {
+          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
+        }
       }
     }
   }

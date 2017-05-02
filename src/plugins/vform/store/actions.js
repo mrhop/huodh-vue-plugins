@@ -76,6 +76,8 @@ export default {
           } else {
             data[item.name] = item.defaultValue
           }
+        } else {
+          data[item.name] = item.defaultValue
         }
       })
       return {items, data, returnFlag, multipart}
