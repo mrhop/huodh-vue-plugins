@@ -28,10 +28,26 @@ creat some vue plugins
 
  git config --global --unset http.proxy
 
+git remote add origin https://github.com/mrhop/xxx.git
+git push -u origin master
  //更改git的remote url
  git remote set-url origin https://github.com/mrhop/XXX.git
 
+git remote add origin https://github.com/mrhop/xxx.git
+git push -u origin master
+
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/mrhop/xxx.git
+git push -u origin master
+
  npm adduser
+ mrhop
  npm publish
  npm unpublish
  node i --no-optional
+
+
+ 继续react的学习以及深入，并完成关联对策项目
+ 然后部分关联vuejs
