@@ -162,6 +162,7 @@
       }
     }
     .table-responsive {
+      overflow-x: visible;
       table {
         width: 100%;
       }

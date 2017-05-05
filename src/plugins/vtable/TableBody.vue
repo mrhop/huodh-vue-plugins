@@ -1,7 +1,7 @@
 <template>
   <tbody class="table-body">
   <tableRow v-for="(row,key) in rows" :row="row" :index="key" :action="action" :hasSn="hasSn"
-            :key="key"
+            :key="key" :header="header"
             :actionUrls="actionUrls" :tableId="tableId"/>
   </tbody>
 </template>

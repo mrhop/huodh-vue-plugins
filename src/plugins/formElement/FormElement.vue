@@ -52,10 +52,15 @@
     <textarea v-else-if="options.type==='textarea'" class="form-control" :name="options.name"
               :rows="options.rows?options.rows:3" v-model="elementValue" ref="formElementEl"
               :placeholder="options.placeholder" :readonly="options.locked"/>
+    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
+                v-on:input="dealWithDate"/>
+    <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked" :value="elementValue"
+                v-on:input="dealWithDate"/>
     <p v-if="options.validatedMsg">{{options.validatedMsg}}</p>
   </div>
 </template>
 <script>
+  import datePicker from '../datePicker/DatePicker.vue'
   export default {
     name: 'form-element',
     data () {
@@ -81,6 +86,20 @@
         if (this.callback && typeof this.callback === 'function') {
           this.callback(this.$refs.formElementEl)
         }
+      },
+      dealWithDate (value) {
+        var parts
+        if (this.options.type === 'date') {
+          parts = value.split('-')
+          this.elementValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
+        } else if (this.options.type === 'daterange') {
+          var tempArr = []
+          for (var index in value) {
+            parts = value[index].split('-')
+            tempArr.push(new Date(parts[0], parts[1] - 1, parts[2]).getTime())
+          }
+          this.elementValue = tempArr
+        }
       }
     },
     watch: {
@@ -92,7 +111,8 @@
           this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
         }
       }
-    }
+    },
+    components: {datePicker}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

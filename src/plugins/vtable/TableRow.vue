@@ -5,9 +5,10 @@
       </router-link>
       <span v-else>{{rowNum}}</span>
     </th>
-    <td v-for="(item,key) in row.value" :key="key">{{item}}</td>
+    <td v-for="(item,key) in row.value" :key="key">{{itemFormat(item,key)}}</td>
     <td class="td-actions">
-      <router-link v-if="action&&action.update" class="btn btn-info" :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
+      <router-link v-if="action&&action.update" class="btn btn-info"
+                   :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
       </router-link>
       <a v-if="action&&action.delete" class="btn btn-danger" v-on:click.prevent="deleteRow(row.key)">删除
       </a>
@@ -35,17 +36,30 @@
         }
       }
     },
-    props: ['row', 'index', 'action', 'hasSn', 'actionUrls', 'tableId'],
+    props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'tableId'],
     methods: lodash.assignIn({
       getRowNum () {
         return this.index + 1
       },
       deleteRow (key, event) {
-        // 首先给出确认modal，然后进行del的fun调用操作,开始modal的处理了
+        // 首先给出确认modal，然后进行del的fun调用操作,开始modal的处理了,尝试使用下filter处理item的值
         this.$Vue.createModal({modalData: this.deleteModal, confirmCallback: this.deleteRowOnConfirmed.bind(this, key)})
       },
       deleteRowOnConfirmed (key) {
         this.tableDeleteRow({id: this.tableId, key, deleteUrl: this.actionUrls.deleteUrl})
+      },
+      itemFormat (item, key) {
+        let headerItem = this.header[this.hasSn ? (key + 1) : key]
+        if (headerItem) {
+          switch (headerItem.type) {
+            case 'date':
+              var dateTmp = new Date(item)
+              return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
+            default:
+              return item
+          }
+        }
+        return item
       }
     }, mapActions([
       'tableDeleteRow'

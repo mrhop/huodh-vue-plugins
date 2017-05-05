@@ -4,6 +4,7 @@ import tab from './plugins/tab/Tab.vue'
 import tree from './plugins/tree/Tree.vue'
 import vform from './plugins/vform/VForm.vue'
 import vtable from './plugins/vtable/VTable.vue'
+import datePicker from './plugins/datePicker/DatePicker.vue'
 import generateStore from './store/index'
 import config from './plugins/config'
 
@@ -15,5 +16,6 @@ export default {
   tab,
   tree,
   vform,
-  vtable
+  vtable,
+  datePicker
 }
