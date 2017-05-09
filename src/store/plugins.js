@@ -10,16 +10,49 @@ const defaultCallPlugin = store => {
     const callParameters = payload[global.CALL_SERVER_PLUGIN]
     if (!callParameters) {
       // 非前后台数据交互action
-      console.log('yes, you jump out')
       return
     } else {
-      console.log('yes, you are here1')
-      const {id, endpoint, httpType = 'get', types: {success_type, failure_type}, data = {}, params = {}} = callParameters
+      const {id, endpoint, httpType = 'get', types: {success_type, failure_type}, data = {}, params = {}, multipart = false} = callParameters
       var config = {
         url: endpoint,
         method: httpType.toLowerCase(),
         params,
         data
+      }
+      if (multipart) {
+        const formData = new FormData()
+        if (data) {
+          for (var key in data) {
+            if (!data.hasOwnProperty(key)) {
+              continue
+            }
+            var obj = data[key]
+            if (obj && typeof obj === 'object') {
+              for (var subKey in obj) {
+                if (obj[subKey] && typeof obj[subKey] === 'object') {
+                  var files = obj[subKey]
+                  if (files) {
+                    for (var i = 0; i < files.length; i++) {
+                      var file = files[i]
+                      formData.append(key, file)
+                    }
+                  }
+                } else {
+                  formData.append(key, obj[subKey])
+                }
+              }
+            } else {
+              formData.append(key, obj)
+            }
+          }
+        }
+        config = {
+          headers: {'Content-Type': 'multipart/form-data'},
+          url: endpoint,
+          method: httpType.toLowerCase(),
+          params,
+          data: formData
+        }
       }
       axios.request(config).then(function (response) {
         store.commit(success_type, {id, data: response.data, callParameters})

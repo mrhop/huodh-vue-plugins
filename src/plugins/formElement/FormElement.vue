@@ -8,9 +8,13 @@
       v-if="options.type==='text'"
       type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
       v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
-    <input
-      v-else-if="options.type==='file'"
-      type="file" class="form-control" :name="options.name" ref="formElementEl"/>
+    <div :class="['file-block',options.validatedMsg&&options.validatedMsg[options.name+n]?'file-error':'']"
+         v-else-if="options.type==='file'" v-for="n in (options.quantity||1)">
+      <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
+             ref="formElementEl"/>
+      <a v-if="options.path&&options.path[n-1]" :href="options.path[n-1]" target="_blank">{{options.name+(options.quantity?n:'')}}</a>
+      <p v-if="options.validatedMsg&&options.validatedMsg[options.name+n]">{{options.validatedMsg[options.name+n]}}</p>
+    </div>
     <input
       v-else-if="options.type==='password'"
       type="password" class="form-control" :name="options.name"
@@ -19,12 +23,18 @@
       v-else-if="options.type==='number'"
       type="number" class="form-control" :name="options.name"
       v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
-    <select v-else-if="options.type==='select'" class="form-control" :name="options.name"
-            v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder">
-      <option v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey" :value="selectItem.value">
-        {{selectItem.label}}
-      </option>
-    </select>
+    <div class="select-block" v-else-if="options.type==='select'" @mouseenter="showSelectCancel = true"
+         @mouseleave="showSelectCancel = false">
+      <select class="form-control" :name="options.name"
+              v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder">
+        <option v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey" :value="selectItem.value">
+          {{selectItem.label}}
+        </option>
+      </select>
+      <transition name="fade">
+        <img class="cancel-btn" src="./select-cancel.png" @click="clearSelect" v-show="showSelectCancel">
+      </transition>
+    </div>
     <label v-else-if="options.type==='radio' && !options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
       <input type="radio" :name="options.name" :value="selectItem.value" v-model="elementValue" ref="formElementEl">
@@ -56,7 +66,9 @@
                 v-on:input="dealWithDate"/>
     <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked" :value="elementValue"
                 v-on:input="dealWithDate"/>
-    <p v-if="options.validatedMsg">{{options.validatedMsg}}</p>
+    <p v-if="options.validatedMsg&&options.type!=='file'">{{options.validatedMsg}}</p>
+    <p v-if="options.type==='file'&&options.validatedMsg&&options.validatedMsg[options.name]">
+      {{options.validatedMsg[options.name]}}</p>
   </div>
 </template>
 <script>
@@ -65,7 +77,8 @@
     name: 'form-element',
     data () {
       return {
-        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
+        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : '')),
+        showSelectCancel: false
       }
     },
     props: ['dataFromParent', 'options', 'callback'],
@@ -78,9 +91,9 @@
             this.dataFromParent[this.options.name] = this.elementValue
           }
         } else {
-          delete this.options.defaultValue
+          this.options.defaultValue = ''
           if (this.dataFromParent) {
-            delete this.dataFromParent[this.options.name]
+            this.dataFromParent[this.options.name] = ''
           }
         }
         if (this.callback && typeof this.callback === 'function') {
@@ -100,6 +113,19 @@
           }
           this.elementValue = tempArr
         }
+      },
+      clearSelect () {
+        this.elementValue = ''
+      },
+      fileChange (event) {
+        // do sth
+        if (event.target.files.length > 0) {
+          this.elementValue[event.target.getAttribute('data-index')] = event.target.files
+        } else {
+          delete this.elementValue[event.target.getAttribute('data-index')]
+        }
+        this.dealWithData()
+        this.$forceUpdate()
       }
     },
     watch: {
@@ -108,7 +134,7 @@
       },
       options: function () {
         if (!this.options.validatedMsg) {
-          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : '')
+          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
         }
       }
     },
@@ -118,15 +144,54 @@
 <style rel="stylesheet/scss" lang="scss">
   @import "../../scss/import.scss";
 
-  .form-control {
-    border: 1px solid #aaa;
-  }
-
-  .form-element.has-error {
-    p {
-      margin: 0;
-      font-size: 0.8em;
-      color: $brand-danger;
+  .form-element {
+    &.has-error {
+      p {
+        margin: 0;
+        font-size: 0.8em;
+        color: $brand-danger;
+      }
+      .date-picker .input-wrapper {
+        border-color: #a94442;
+      }
+      div.file-block {
+        .form-control {
+          border: 1px solid #ccc;
+        }
+        &.file-error {
+          .form-control {
+            border-color: #a94442;
+          }
+        }
+      }
+    }
+    .form-control {
+      border: 1px solid #aaa;
+    }
+    .select-block {
+      .cancel-btn {
+        height: 14px;
+        width: 14px;
+        position: absolute;
+        right: 34px;
+        top: 10px;
+      }
+    }
+    .toggle-enter, .toggle-leave-active {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    .toggle-enter-active, .toggle-leave-active {
+      transition: all ease .2s;
+    }
+    .fade-enter, .fade-leave-active {
+      opacity: 0;
+      transform: scale3d(0, 0, 0);
+    }
+    .fade-enter-active, .fade-leave-active {
+      transition: all ease .1s;
     }
   }
+
+
 </style>
