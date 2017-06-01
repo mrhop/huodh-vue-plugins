@@ -1,6 +1,5 @@
 <template>
-  <div :class="className" ref="contentWrapEl">
-    <div></div>
+  <div ref="contentWrapEl">
   </div>
 </template>
 <script>
@@ -9,8 +8,7 @@
     name: 'v-tab-item',
     data () {
       return {
-        localKey: this.key,
-        className: 'tab-body-item'
+        localKey: this.key
       }
     },
     props: ['item'],
@@ -21,6 +19,12 @@
       appendContent: function () {
         const _this = this
         let promise
+        if (this.item.url) {
+          var itemUrl = this.$basePath + this.item.url
+          this.item.content = {
+            template: '<iframe style="width: 100%" src="' + itemUrl + '"></iframe>'
+          }
+        }
         if (this.item.content && !this.item.cachedData) {
           if (typeof this.item.content === 'string') {
           } else if (typeof this.item.content === 'function') {
