@@ -73,6 +73,7 @@ const utilfuns = {
         var itemTemp = data[j]
         if (item.name === itemTemp.name) {
           lodash.assign(item, itemTemp)
+          delete item.validatedMsg
         }
       }
     }
