@@ -6,10 +6,11 @@
       </div>
     </div>
     <form class="form-horizontal">
-      <div class="form-group" v-for="(item,key) in items" :key="key">
+      <div class="form-group" v-for="(item,key) in items" :key="key" v-if="!item.hidden">
         <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
         <div class="col-sm-10">
-          <formElement :options="item"/>
+          <formElement v-if="!item.hidden&&item.ruleChange" :options="item" v-on:ruleChange="ruleChange"/>
+          <formElement v-else-if="!item.hidden" :options="item"/>
         </div>
       </div>
       <!-- 此处是底部的actions -->
@@ -70,6 +71,11 @@
       resetForm () {
         this.formReset({id: this.id})
       },
+      ruleChange (parameters) {
+        if (this.actionUrls.ruleChangeUrl) {
+          this.formRuleChange({id: this.id, parameters, ruleChangeUrl: this.actionUrls.ruleChangeUrl})
+        }
+      },
       saveForm () {
         this.formSave({id: this.id, key: this.key, saveUrl: this.actionUrls.saveUrl})
       },
@@ -82,6 +88,7 @@
     }, mapActions([
       'formInit',
       'formReset',
+      'formRuleChange',
       'formSave',
       'clearForm',
       'removeFormError',

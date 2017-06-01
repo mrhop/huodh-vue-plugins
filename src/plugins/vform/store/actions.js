@@ -18,6 +18,17 @@ export default {
   formReset: function ({commit, state}, {id}) {
     utilfuns.resetForm(id)
   },
+  formRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl}) {
+    commit(types.FORM_RULE_CHANGE_REQUEST, {
+      [global.CALL_SERVER_PLUGIN]: {
+        id,
+        httpType: 'post',
+        endpoint: ruleChangeUrl,
+        data: parameters,
+        types: {success_type: types.FORM_RULE_CHANGE_SUCCESS, failure_type: types.FORM_RULE_CHANGE_FAILURE}
+      }
+    })
+  },
   formSave: function ({commit, state}, {id, key, saveUrl}) {
     let items = lodash.cloneDeep(utilfuns.getForm(id).rules.items)
     // 采用data抽取的方式
@@ -89,7 +100,7 @@ export default {
         if (item.type === 'file') {
           multipart = true
         }
-        if (!item.locked && (item.validate && item.validate.length > 0 || item.type === 'file')) {
+        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
           let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
           if (validatedMsg) {
             item.validatedMsg = validatedMsg

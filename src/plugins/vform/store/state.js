@@ -19,6 +19,9 @@ const types = {
   FORM_REQUEST: 'FORM_REQUEST',
   FORM_SUCCESS: 'FORM_SUCCESS',
   FORM_FAILURE: 'FORM_FAILURE',
+  FORM_RULE_CHANGE_REQUEST: 'FORM_RULE_CHANGE_REQUEST',
+  FORM_RULE_CHANGE_SUCCESS: 'FORM_RULE_CHANGE_SUCCESS',
+  FORM_RULE_CHANGE_FAILURE: 'FORM_RULE_CHANGE_FAILURE',
   FORM_SAVE_REQUEST: 'FORM_SAVE_REQUEST',
   FORM_SAVE_SUCCESS: 'FORM_SAVE_SUCCESS',
   FORM_SAVE_FAILURE: 'FORM_SAVE_FAILURE',
@@ -60,6 +63,20 @@ const utilfuns = {
   setForm (id, data, additionalParams) {
     let dataLocal = state.dataArray.find(i => i.id === id)
     lodash.assign(dataLocal, data, additionalParams)
+    return dataLocal
+  },
+  changeFormRule (id, data, additionalParams) {
+    let dataLocal = state.dataArray.find(i => i.id === id)
+    for (var i in dataLocal.rules.items) {
+      var item = dataLocal.rules.items[i]
+      for (var j in data) {
+        var itemTemp = data[j]
+        if (item.name === itemTemp.name) {
+          lodash.assign(item, itemTemp)
+        }
+      }
+    }
+    lodash.assign(dataLocal, additionalParams)
     return dataLocal
   },
   deleteForm (id) {

@@ -99,6 +99,9 @@
         if (this.callback && typeof this.callback === 'function') {
           this.callback(this.$refs.formElementEl)
         }
+        if (this.options.ruleChange) {
+          this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
+        }
       },
       dealWithDate (value) {
         var parts

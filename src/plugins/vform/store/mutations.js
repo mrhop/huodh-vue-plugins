@@ -35,6 +35,14 @@ export default {
       utilfuns.getForm(id).error = error
     }
   },
+  [types.FORM_RULE_CHANGE_REQUEST] (state) {
+  },
+  [types.FORM_RULE_CHANGE_SUCCESS] (state, {id, data, callParameters}) {
+    utilfuns.changeFormRule(id, data, {operation: 'changeRule'})
+  },
+  [types.FORM_RULE_CHANGE_FAILURE] (state, {id, error}) {
+    utilfuns.getForm(id).error = error
+  },
   [types.CLEAR_FORM] (state, {id}) {
     utilfuns.deleteForm(id)
   },
