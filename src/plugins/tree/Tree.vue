@@ -1,10 +1,10 @@
 <template>
   <div class="tree-wrapper" v-if="treeDataLocal">
     <ul v-if="isArray">
-      <treeItem v-for="item in treeDataLocal" :itemData="item" :key="item.id"/>
+      <treeItem v-on:click="clickTransfer" v-for="item in treeDataLocal" :itemData="item" :key="item.id"/>
     </ul>
     <ul v-else-if="treeDataLocal.title">
-      <treeItem :itemData="treeDataLocal"/>
+      <treeItem v-on:click="clickTransfer" :itemData="treeDataLocal"/>
     </ul>
   </div>
 </template>
@@ -42,6 +42,9 @@
           .catch(function (error) {
             console.log('error' + error)
           })
+      },
+      clickTransfer: function (args) {
+        this.$emit('click', args)
       }
     },
     components: {

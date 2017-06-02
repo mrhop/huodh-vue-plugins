@@ -2,10 +2,11 @@
   <li class="tree-item">
     <a v-if="children" v-on:click="clickToggle"><span v-if="iconClass" :class="iconClass"/><span v-if="children">{{title}}</span></a>
     <router-link v-else-if="url" :to="url"><span v-if="iconClass" :class="iconClass"/>{{title}}</router-link>
-    <a v-else-if="clickEvent" @click.prevent="clickEventLocal"><span v-if="iconClass" :class="iconClass"/>{{title}}</a>
+    <a v-else-if="itemData.emitClick" @click.prevent="treeClick"><span v-if="iconClass"
+                                                                       :class="iconClass"/>{{title}}</a>
     <p v-else><span v-if="iconClass" :class="iconClass"/>{{title}}</p>
     <ul v-if="children" v-show="showChildren">
-      <treeItem v-for="item in children" :itemData="item" :key="item.id"/>
+      <treeItem v-for="item in children" :itemData="item" v-on:click="clickTransfer" :key="item.id"/>
     </ul>
   </li>
 </template>
@@ -16,7 +17,6 @@
       return {
         title: null,
         url: null,
-        clickEvent: null,
         children: null,
         iconClass: null,
         showChildren: false,
@@ -36,7 +36,6 @@
           if (!this.itemData.children) {
             this.url = this.itemData.url
             /* eslint no-eval: 0 */
-            this.clickEvent = this.itemData.clickFunction ? eval(this.itemData.clickFunction) : (this.itemData.clickFunctionName ? eval(this.itemData.clickFunctionName) : null)
           } else {
             this.children = this.itemData.children
           }
@@ -45,8 +44,11 @@
       clickToggle (event) {
         this.showChildren = !this.showChildren
       },
-      clickEventLocal () {
-        this.clickEvent && this.clickEvent.apply(this)
+      treeClick () {
+        this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
+      },
+      clickTransfer: function (args) {
+        this.$emit('click', args)
       }
     }
   }

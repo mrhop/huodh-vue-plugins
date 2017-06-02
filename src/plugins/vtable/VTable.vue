@@ -136,6 +136,15 @@
         if (this.deleteRowSuccess) {
           this.tableRefreshList({id: this.id, listUrl: this.actionUrls.listUrl})
         }
+      },
+      actionUrls: {
+        handler: function (val, oldVal) {
+          if (val.listUrl && val.listUrl != oldVal.listUrl) {
+            console.log('do init')
+            this.tableInit({id: this.id, listUrl: this.actionUrls.listUrl})
+          }
+        },
+        deep: true
       }
     }
   }
