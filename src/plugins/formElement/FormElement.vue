@@ -93,7 +93,7 @@
         elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : '')),
         showSelectCancel: false,
         showTree: false,
-        treeValue: this.options.defaultValue || ''
+        treeValue: this.options.defaultLabel || ''
       }
     },
     props: ['dataFromParent', 'options', 'callback'],
@@ -175,6 +175,7 @@
       options: function () {
         if (!this.options.validatedMsg) {
           this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
+          this.treeValue = this.options.defaultLabel || ''
         }
       }
     },
