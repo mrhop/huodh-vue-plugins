@@ -63,9 +63,21 @@
               :rows="options.rows?options.rows:3" v-model="elementValue" ref="formElementEl"
               :placeholder="options.placeholder" :readonly="options.locked"/>
     <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
-                v-on:input="dealWithDate"/>
+                v-on:input="dealWithDate" ref="formElementEl"/>
     <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked" :value="elementValue"
-                v-on:input="dealWithDate"/>
+                v-on:input="dealWithDate" ref="formElementEl"/>
+    <div class="tree-block" v-else-if="options.type==='tree'" @mouseenter="showSelectCancel = true"
+         @mouseleave="showSelectCancel = false">
+      <input
+        type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
+        v-model="treeValue" ref="formElementEl" :readonly="true" @click="showOrHideTree"/>
+      <transition name="fade">
+        <img class="cancel-btn" src="./select-cancel.png" @click="clearSelect" v-show="showSelectCancel">
+      </transition>
+      <transition name="toggle">
+        <tree v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
+      </transition>
+    </div>
     <p v-if="options.validatedMsg&&options.type!=='file'">{{options.validatedMsg}}</p>
     <p v-if="options.type==='file'&&options.validatedMsg&&options.validatedMsg[options.name]">
       {{options.validatedMsg[options.name]}}</p>
@@ -73,12 +85,15 @@
 </template>
 <script>
   import datePicker from '../datePicker/DatePicker.vue'
+  import tree from '../tree/Tree.vue'
   export default {
     name: 'form-element',
     data () {
       return {
         elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : '')),
-        showSelectCancel: false
+        showSelectCancel: false,
+        showTree: false,
+        treeValue: this.options.defaultValue || ''
       }
     },
     props: ['dataFromParent', 'options', 'callback'],
@@ -119,6 +134,7 @@
       },
       clearSelect () {
         this.elementValue = ''
+        this.treeValue = ''
       },
       fileChange (event) {
         // do sth
@@ -129,6 +145,27 @@
         }
         this.dealWithData()
         this.$forceUpdate()
+      },
+      showOrHideTree () {
+        console.log('show or hide')
+        this.showTree = !this.showTree
+      },
+      dealWithTree (data) {
+        console.log('deal with tree')
+        const {value, label} = data || {}
+        if (value) {
+          this.treeValue = label
+          this.elementValue = value
+        } else {
+          this.treeValue = ''
+          this.elementValue = ''
+        }
+        this.showTree = false
+      },
+      close (e) {
+        if (!this.$el.contains(e.target)) {
+          this.showTree = false
+        }
       }
     },
     watch: {
@@ -141,7 +178,14 @@
         }
       }
     },
-    components: {datePicker}
+    mounted () {
+      this.$nextTick(function () {
+        if (this.options && this.options.type === 'tree') {
+          window.addEventListener('click', this.close)
+        }
+      })
+    },
+    components: {datePicker, tree}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -171,13 +215,34 @@
     .form-control {
       border: 1px solid #aaa;
     }
-    .select-block {
+    .select-block, .tree-block {
       .cancel-btn {
         height: 14px;
         width: 14px;
         position: absolute;
         right: 34px;
         top: 10px;
+      }
+    }
+    .tree-block {
+      position: relative;
+      .cancel-btn {
+        right: 10px;
+      }
+      .tree-wrapper {
+        position: absolute;
+        z-index: 4;
+        width: 100%;
+        border: 1px solid rgb(204, 204, 204);
+        border-radius: 2px;
+        background: rgb(255, 255, 255);
+        box-shadow: 5px 5px 10px $base-background;
+        a {
+          color: #6ac1c9;
+          &:hover {
+            color: #0097a7;
+          }
+        }
       }
     }
     .toggle-enter, .toggle-leave-active {

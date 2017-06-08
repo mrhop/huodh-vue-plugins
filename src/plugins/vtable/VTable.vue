@@ -139,7 +139,7 @@
       },
       actionUrls: {
         handler: function (val, oldVal) {
-          if (val.listUrl && val.listUrl != oldVal.listUrl) {
+          if (val.listUrl && val.listUrl !== oldVal.listUrl) {
             console.log('do init')
             this.tableInit({id: this.id, listUrl: this.actionUrls.listUrl})
           }

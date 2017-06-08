@@ -15,6 +15,7 @@
     name: 'treeItem',
     data () {
       return {
+        id: null,
         title: null,
         url: null,
         children: null,
@@ -30,6 +31,7 @@
     methods: {
       initTreeItem () {
         if (this.itemData) {
+          this.id = this.itemData.id
           this.title = this.itemData.title
           this.iconClass = this.itemData.iconClass
           this.dataLocal = this.itemData.data
