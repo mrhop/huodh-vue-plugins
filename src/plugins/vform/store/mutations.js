@@ -22,8 +22,10 @@ export default {
       utilfuns.getForm(id).error = data.error
     } else if (data && data.success) {
       utilfuns.getForm(id).success = data.success
+      utilfuns.getForm(id).data = callParameters.data
     } else {
       utilfuns.getForm(id).success = true
+      utilfuns.getForm(id).data = callParameters.data
     }
   },
   [types.FORM_SAVE_FAILURE] (state, {id, items, error}) {

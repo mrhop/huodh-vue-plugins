@@ -7,6 +7,10 @@ export default{
     let data = utilfuns.getForm(id)
     return data.rules.items || state.default.rules.items
   },
+  data: (state, getters) => (id) => {
+    let data = utilfuns.getForm(id)
+    return data.data
+  },
   formAction: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)
     return data.rules.action || state.default.rules.action

@@ -4,6 +4,7 @@
 import Vuex from 'vuex'
 import table from '../plugins/vtable/store'
 import form from '../plugins/vform/store'
+import tree from '../plugins/tree/store'
 import {default as defaultPlugins} from './plugins'
 import lodash from 'lodash'
 function generateStore ({additionalModules = {}, actions = {}, getters = {}, additionalPlugins = []} = {}) {
@@ -12,7 +13,7 @@ function generateStore ({additionalModules = {}, actions = {}, getters = {}, add
     getters,
     modules: lodash.assign({
       // 此处应该是table。form，tree的结合
-      table, form
+      table, form, tree
     }, additionalModules),
     plugins: defaultPlugins.concat(additionalPlugins)
   })

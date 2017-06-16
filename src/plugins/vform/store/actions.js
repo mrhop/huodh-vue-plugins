@@ -4,16 +4,20 @@
 import lodash from 'lodash'
 import {types, utilfuns} from './state'
 export default {
-  formInit: function ({commit, state}, {id, key, initUrl}) {
-    commit(types.FORM_REQUEST, {
-      [global.CALL_SERVER_PLUGIN]: {
-        id,
-        httpType: 'get',
-        endpoint: initUrl,
-        params: {key},
-        types: {success_type: types.FORM_SUCCESS, failure_type: types.FORM_FAILURE}
-      }
-    })
+  formInit: function ({commit, state}, {id, key, initUrl, formRule}) {
+    if (initUrl) {
+      commit(types.FORM_REQUEST, {
+        [global.CALL_SERVER_PLUGIN]: {
+          id,
+          httpType: 'get',
+          endpoint: initUrl,
+          params: {key},
+          types: {success_type: types.FORM_SUCCESS, failure_type: types.FORM_FAILURE}
+        }
+      })
+    } else {
+      utilfuns.initForm(id, formRule, {operation: 'initForm'})
+    }
   },
   formReset: function ({commit, state}, {id}) {
     utilfuns.resetForm(id)

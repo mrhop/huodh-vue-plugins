@@ -12,6 +12,7 @@ const state = {
     },
     error: '',
     success: '',
+    data: {},
     operation: 'getForm'
   }
 }
@@ -49,16 +50,16 @@ const utilfuns = {
     }
   },
   initForm (id, data, additionalParams) {
-    let dataLocal = state.dataArray.find(i => i.id === id)
-    if (!dataLocal) {
-      dataLocal = lodash.assign({}, state.default, data, additionalParams)
-      dataLocal.id = id
-      state.dataArray.push(dataLocal)
-    } else {
-      lodash.assign(dataLocal, data, additionalParams)
-    }
+    lodash.remove(state.dataArray, function (item) {
+      return item.id === id
+    })
+    lodash.remove(state.dataArrayInit, function (item) {
+      return item.id === id
+    })
+    let dataLocal = lodash.assign({}, state.default, data, additionalParams)
+    dataLocal.id = id
+    state.dataArray.push(lodash.cloneDeep(dataLocal))
     state.dataArrayInit.push(lodash.cloneDeep(dataLocal))
-    return dataLocal
   },
   setForm (id, data, additionalParams) {
     let dataLocal = state.dataArray.find(i => i.id === id)

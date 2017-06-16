@@ -75,7 +75,7 @@
         <img class="cancel-btn" src="./select-cancel.png" @click="clearSelect" v-show="showSelectCancel">
       </transition>
       <transition name="toggle">
-        <tree v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
+        <treeForForm v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
       </transition>
     </div>
     <p v-if="options.validatedMsg&&options.type!=='file'">{{options.validatedMsg}}</p>
@@ -85,7 +85,7 @@
 </template>
 <script>
   import datePicker from '../datePicker/DatePicker.vue'
-  import tree from '../tree/Tree.vue'
+  import treeForForm from '../tree/TreeForForm.vue'
   export default {
     name: 'form-element',
     data () {
@@ -186,7 +186,7 @@
         }
       })
     },
-    components: {datePicker, tree}
+    components: {datePicker, treeForForm}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

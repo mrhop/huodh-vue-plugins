@@ -6,7 +6,7 @@
       </div>
     </div>
     <form class="form-horizontal">
-      <div class="form-group" v-for="(item,key) in items" :key="key" v-if="!item.hidden">
+      <div v-show="item.type!='hidden'" class="form-group" v-for="(item,key) in items" :key="key" v-if="!item.hidden">
         <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
         <div class="col-sm-10">
           <formElement v-if="!item.hidden&&item.ruleChange" :options="item" v-on:ruleChange="ruleChange"/>
@@ -66,7 +66,20 @@
       }
     },
     components: {formElement},
-    props: ['id', 'keepAlive', 'actionUrls'],
+    props: {
+      id: {},
+      keepAlive: {},
+      actionUrls: {
+        default: function () {
+          return {}
+        }
+      },
+      formRule: {
+        default: function () {
+          return {}
+        }
+      }
+    },
     methods: lodash.assignIn({
       resetForm () {
         this.formReset({id: this.id})
@@ -106,23 +119,44 @@
         this.removeFormError({id: this.id})
       },
       success: function () {
+        let data = this.$store.getters.data(this.id)
         if (this.success) {
           if (typeof this.success === 'object') {
-            if (this.success.title) {
+            if (this.success.title || this.success.message) {
               this.$options.successModalData.header = this.success.title
+              this.$options.successModalData.content = this.success.message
+              this.$Vue.createModal({modalData: this.$options.successModalData})
             }
-            this.$options.successModalData.content = this.success.message
-            this.$Vue.createModal({modalData: this.$options.successModalData})
+            if (this.success.data) {
+              lodash.assign(data, this.success.data)
+            }
             this.removeFormSuccess({id: this.id})
           } else {
             this.removeFormSuccess({id: this.id})
             this.backup()
           }
+          this.$emit('afterSaved', data)
         }
+      },
+      actionUrls: {
+        handler: function (val, oldVal) {
+          if (val.initUrl && val.initUrl !== oldVal.initUrl) {
+            console.log('do reinit')
+            this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
+          }
+        },
+        deep: true
+      },
+      formRule: {
+        handler: function (val, oldVal) {
+          console.log('do reinit')
+          this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
+        },
+        deep: true
       }
     },
     created () {
-      this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl})
+      this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
     },
     destoryed () {
       if (!this.keepAlive) {
