@@ -6,5 +6,9 @@ export default{
   treeData: (state, getters) => (id) => {
     let data = utilfuns.getTree(id)
     return data
+  },
+  treeError: (state, getters) => (id) => {
+    let data = utilfuns.getTree(id)
+    return data && data.error || ''
   }
 }

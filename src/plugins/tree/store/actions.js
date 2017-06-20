@@ -2,6 +2,7 @@
  * Created by Donghui Huo on 2017/3/29.
  */
 import {types, utilfuns} from './state'
+import Vue from 'vue'
 export default {
   treeInit: function ({commit, state}, {id, initUrl, treeData}) {
     if (initUrl) {
@@ -36,5 +37,8 @@ export default {
   },
   treeItemUpdate: function ({commit, state}, {id, itemData}) {
     utilfuns.updateTreeItem(id, itemData)
+  },
+  removeTreeError: function ({commit}, {id}) {
+    Vue.delete(utilfuns.getTree(id), 'error')
   }
 }

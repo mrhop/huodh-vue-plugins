@@ -15,7 +15,8 @@
                                                                              class="glyphicon glyphicon-plus"
                                                                              @click.prevent="addCurrent"/><a
           v-if="actionUrls&&actionUrls.editUrl" class="glyphicon glyphicon-edit" @click.prevent="editCurrent"/><a
-          v-if="actionUrls&&actionUrls.deleteUrl" class="glyphicon glyphicon-trash"
+          v-if="(itemData.deletable||itemData.deletable===undefined)&&actionUrls&&actionUrls.deleteUrl"
+          class="glyphicon glyphicon-trash"
           @click.prevent="deleteCurrent"/></span>
       </transition>
     </p>

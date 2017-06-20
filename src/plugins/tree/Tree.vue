@@ -27,6 +27,11 @@
       <span slot="header">删除节点</span>
       <div slot="body">删除节点，同时也会删除其下属的子节点，确认要删除吗？</div>
     </modalTpl>
+    <modalTpl v-if="editable&&actionUrls&&actionUrls.deleteUrl" type="danger"
+              :trigger="deleteErrorTrigger">
+      <span slot="header">{{errorDefault.header}}</span>
+      <div slot="body">{{errorDefault.content}}</div>
+    </modalTpl>
   </div>
 </template>
 <script>
@@ -104,7 +109,8 @@
           }
         },
         editModalTrigger: false,
-        deleteModalTrigger: false
+        deleteModalTrigger: false,
+        deleteErrorTrigger: false
       }
     },
     computed: {
@@ -119,6 +125,29 @@
           }
         }
         return false
+      },
+      error () {
+        return this.$store.getters.treeError(this.id)
+      },
+      errorDefault () {
+        return {
+          header: '删除节点失败',
+          content: '网络原因失败'
+        }
+      }
+    },
+    watch: {
+      error: function () {
+        if (this.error) {
+          if (this.error.header) {
+            this.errorDefault.header = this.error.header
+          }
+          if (this.error.content) {
+            this.errorDefault.content = this.error.content
+          }
+          this.deleteErrorTrigger = !this.deleteErrorTrigger
+        }
+        this.removeTreeError({id: this.id})
       }
     },
     props: {
@@ -171,7 +200,8 @@
       'treeDelete',
       'treeItemDelete',
       'treeItemAdd',
-      'treeItemUpdate'
+      'treeItemUpdate',
+      'removeTreeError'
     ])),
     components: {
       treeItem, modalTpl, vform
