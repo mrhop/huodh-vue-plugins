@@ -6,11 +6,24 @@
       </div>
     </div>
     <form class="form-horizontal">
-      <div v-show="item.type!='hidden'" class="form-group" v-for="(item,key) in items" :key="key" v-if="!item.hidden">
-        <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
-        <div class="col-sm-10">
-          <formElement v-if="!item.hidden&&item.ruleChange" :options="item" v-on:ruleChange="ruleChange"/>
-          <formElement v-else-if="!item.hidden" :options="item"/>
+      <div v-for="(item,key) in items" :key="key">
+        <div class="form-group" v-if="!Array.isArray(item)&&!item.hidden" v-show="item.type!='hidden'">
+          <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
+          <div class="col-sm-10">
+            <formElement v-if="!item.hidden&&item.ruleChange" :options="item" v-on:ruleChange="ruleChange"/>
+            <formElement v-else-if="!item.hidden" :options="item"/>
+          </div>
+        </div>
+        <div v-else-if="Array.isArray(item)" class="elements-inline">
+          <div v-if="!subItem.hidden" v-show="subItem.type!='hidden'"
+               :class="['form-group', subItem.validatedMsg?'has-error':'']"
+               v-for="(subItem,subkey) in item" :key="subkey">
+            <label :for="subItem.name" class="col-sm-2 control-label">{{subItem.label}}</label>
+            <div class="col-sm-10">
+              <formElement v-if="!subItem.hidden&&subItem.ruleChange" :options="subItem" v-on:ruleChange="ruleChange"/>
+              <formElement v-else-if="!subItem.hidden" :options="subItem"/>
+            </div>
+          </div>
         </div>
       </div>
       <!-- 此处是底部的actions -->
@@ -82,7 +95,7 @@
     },
     methods: lodash.assignIn({
       resetForm () {
-        this.formReset({id: this.id})
+        this.formReset({id: this.id, resetUrl: this.actionUrls.resetUrl})
       },
       ruleChange (parameters) {
         if (this.actionUrls.ruleChangeUrl) {
@@ -180,6 +193,34 @@
     }
     .form-horizontal {
       // 内部的一些设置
+      @media(min-width: $screen-md-min) {
+        div.elements-inline {
+          margin-left: 17%;
+          .form-group {
+            margin-left: 0;
+            margin-right: 0;
+            display: inline-block;
+            vertical-align: middle;
+            &.has-error {
+              margin-bottom: 0;
+            }
+            .col-sm-2, .col-sm-10 {
+              width: auto;
+              padding-left: 0;
+              padding-right: 0;
+            }
+            .col-sm-2 {
+              margin-right: 5px;
+              margin-left: 10px;
+            }
+            &:first-child {
+              .col-sm-2 {
+                margin-left: 0;
+              }
+            }
+          }
+        }
+      }
     }
   }
 </style>

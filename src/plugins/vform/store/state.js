@@ -26,6 +26,9 @@ const types = {
   FORM_SAVE_REQUEST: 'FORM_SAVE_REQUEST',
   FORM_SAVE_SUCCESS: 'FORM_SAVE_SUCCESS',
   FORM_SAVE_FAILURE: 'FORM_SAVE_FAILURE',
+  FORM_RESET_REQUEST: 'FORM_RESET_REQUEST',
+  FORM_RESET_SUCCESS: 'FORM_RESET_SUCCESS',
+  FORM_RESET_FAILURE: 'FORM_RESET_FAILURE',
   CLEAR_FORM: 'CLEAR_FORM',
   REMOVE_FORM_ERROR: 'REMOVE_FORM_ERROR',
   REMOVE_FORM_SUCCESS: 'REMOVE_FORM_SUCCESS'
@@ -72,9 +75,17 @@ const utilfuns = {
       var item = dataLocal.rules.items[i]
       for (var j in data) {
         var itemTemp = data[j]
-        if (item.name === itemTemp.name) {
+        if (!Array.isArray(item) && item.name === itemTemp.name) {
           lodash.assign(item, itemTemp)
           delete item.validatedMsg
+        } else if (Array.isArray(item)) {
+          for (var k in item) {
+            var subItem = item[k]
+            if (subItem.name === itemTemp.name) {
+              lodash.assign(subItem, itemTemp)
+              delete subItem.validatedMsg
+            }
+          }
         }
       }
     }

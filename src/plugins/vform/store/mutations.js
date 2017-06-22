@@ -12,6 +12,19 @@ export default {
     console.log('到达error这里')
     utilfuns.getForm(id).error = error
   },
+  [types.FORM_RESET_REQUEST] (state) {
+  },
+  [types.FORM_RESET_SUCCESS] (state, {id, data, callParameters}) {
+    if (data) {
+      utilfuns.initForm(id, data, {operation: 'resetForm'})
+    } else {
+      utilfuns.resetForm(id)
+    }
+  },
+  [types.FORM_RESET_FAILURE] (state, {id, error}) {
+    console.log('到达error这里')
+    utilfuns.getForm(id).error = error
+  },
   [types.FORM_SAVE_REQUEST] (state) {
   },
   [types.FORM_SAVE_SUCCESS] (state, {id, data, callParameters}) {

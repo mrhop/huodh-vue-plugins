@@ -8,6 +8,10 @@
       v-if="options.type==='text'"
       type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
       v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
+    <input
+      v-if="options.type==='button'"
+      type="button" class="form-control" :name="options.name"
+      :value="options.defaultValue" ref="formElementEl" @click="buttonClick"/>
     <div :class="['file-block',options.validatedMsg&&options.validatedMsg[options.name+n]?'file-error':'']"
          v-else-if="options.type==='file'" v-for="n in (options.quantity||1)">
       <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
@@ -135,6 +139,11 @@
       clearSelect () {
         this.elementValue = ''
         this.treeValue = ''
+      },
+      buttonClick () {
+        if (this.options.ruleChange) {
+          this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
+        }
       },
       fileChange (event) {
         // do sth

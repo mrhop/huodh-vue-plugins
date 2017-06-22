@@ -19,8 +19,20 @@ export default {
       utilfuns.initForm(id, formRule, {operation: 'initForm'})
     }
   },
-  formReset: function ({commit, state}, {id}) {
-    utilfuns.resetForm(id)
+  formReset: function ({commit, state}, {id, resetUrl}) {
+    if (!resetUrl) {
+      utilfuns.resetForm(id)
+    } else {
+      commit(types.FORM_RESET_REQUEST, {
+        [global.CALL_SERVER_PLUGIN]: {
+          id,
+          httpType: 'get',
+          endpoint: resetUrl,
+          params: {key: id},
+          types: {success_type: types.FORM_RESET_SUCCESS, failure_type: types.FORM_RESET_FAILURE}
+        }
+      })
+    }
   },
   formRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl}) {
     commit(types.FORM_RULE_CHANGE_REQUEST, {
@@ -100,7 +112,7 @@ export default {
           return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
         }
       }
-      items.forEach(function (item) {
+      let validateSub = function (item) {
         if (item.type === 'file') {
           multipart = true
         }
@@ -114,6 +126,15 @@ export default {
           }
         } else {
           data[item.name] = item.defaultValue
+        }
+      }
+      items.forEach(function (item) {
+        if (Array.isArray(item)) {
+          item.forEach(function (subitem) {
+            validateSub(subitem)
+          })
+        } else {
+          validateSub(item)
         }
       })
       return {items, data, returnFlag, multipart}
