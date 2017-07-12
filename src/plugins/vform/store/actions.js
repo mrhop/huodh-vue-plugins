@@ -4,7 +4,7 @@
 import lodash from 'lodash'
 import {types, utilfuns} from './state'
 export default {
-  formInit: function ({commit, state}, {id, key, initUrl, formRule}) {
+  formInit: function ({commit, state}, {id, key, initUrl, initAction, formRule}) {
     if (initUrl) {
       commit(types.FORM_REQUEST, {
         [global.CALL_SERVER_PLUGIN]: {
@@ -15,14 +15,17 @@ export default {
           types: {success_type: types.FORM_SUCCESS, failure_type: types.FORM_FAILURE}
         }
       })
-    } else {
+    } else if (formRule) {
       utilfuns.initForm(id, formRule, {operation: 'initForm'})
+    } else if (initAction) {
+      var data = initAction({key})
+      utilfuns.initForm(id, data, {operation: 'initForm'})
     }
   },
-  formReset: function ({commit, state}, {id, resetUrl}) {
-    if (!resetUrl) {
+  formReset: function ({commit, state}, {id, resetUrl, resetAction}) {
+    if (!resetUrl && !resetAction) {
       utilfuns.resetForm(id)
-    } else {
+    } else if (resetUrl) {
       commit(types.FORM_RESET_REQUEST, {
         [global.CALL_SERVER_PLUGIN]: {
           id,
@@ -32,20 +35,32 @@ export default {
           types: {success_type: types.FORM_RESET_SUCCESS, failure_type: types.FORM_RESET_FAILURE}
         }
       })
+    } else if (resetAction) {
+      var data = resetAction({key: id})
+      commit(types.FORM_RESET_SUCCESS, {
+        id, data, callParameters: {id, resetUrl, resetAction}
+      })
     }
   },
-  formRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl}) {
-    commit(types.FORM_RULE_CHANGE_REQUEST, {
-      [global.CALL_SERVER_PLUGIN]: {
-        id,
-        httpType: 'post',
-        endpoint: ruleChangeUrl,
-        data: parameters,
-        types: {success_type: types.FORM_RULE_CHANGE_SUCCESS, failure_type: types.FORM_RULE_CHANGE_FAILURE}
-      }
-    })
+  formRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl, ruleChangeAction}) {
+    if (ruleChangeUrl) {
+      commit(types.FORM_RULE_CHANGE_REQUEST, {
+        [global.CALL_SERVER_PLUGIN]: {
+          id,
+          httpType: 'post',
+          endpoint: ruleChangeUrl,
+          data: parameters,
+          types: {success_type: types.FORM_RULE_CHANGE_SUCCESS, failure_type: types.FORM_RULE_CHANGE_FAILURE}
+        }
+      })
+    } else if (ruleChangeAction) {
+      var data = ruleChangeAction({parameters})
+      commit(types.FORM_RESET_SUCCESS, {
+        id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
+      })
+    }
   },
-  formSave: function ({commit, state}, {id, key, saveUrl}) {
+  formSave: function ({commit, state}, {id, key, saveUrl, saveAction}) {
     let items = lodash.cloneDeep(utilfuns.getForm(id).rules.items)
     // 采用data抽取的方式
     // 稍后需要考虑multi type
@@ -144,17 +159,24 @@ export default {
       // 校验失败
       commit(types.FORM_SAVE_FAILURE, {id, items})
     } else {
-      commit(types.FORM_SAVE_REQUEST, {
-        [global.CALL_SERVER_PLUGIN]: {
-          id,
-          httpType: 'post',
-          endpoint: saveUrl,
-          params: {key},
-          data: validated.data,
-          multipart: validated.multipart,
-          types: {success_type: types.FORM_SAVE_SUCCESS, failure_type: types.FORM_SAVE_FAILURE}
-        }
-      })
+      if (saveUrl) {
+        commit(types.FORM_SAVE_REQUEST, {
+          [global.CALL_SERVER_PLUGIN]: {
+            id,
+            httpType: 'post',
+            endpoint: saveUrl,
+            params: {key},
+            data: validated.data,
+            multipart: validated.multipart,
+            types: {success_type: types.FORM_SAVE_SUCCESS, failure_type: types.FORM_SAVE_FAILURE}
+          }
+        })
+      } else if (saveAction) {
+        var data = saveAction({key, data: validated.data, multipart: validated.multipart})
+        commit(types.FORM_SAVE_SUCCESS, {
+          id, data, callParameters: {id, saveUrl, saveAction}
+        })
+      }
     }
   },
   clearForm: function ({commit}, {id}) {

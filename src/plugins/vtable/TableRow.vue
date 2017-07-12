@@ -36,7 +36,7 @@
         }
       }
     },
-    props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'tableId'],
+    props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'actions', 'tableId'],
     methods: lodash.assignIn({
       getRowNum () {
         return this.index + 1
@@ -46,7 +46,12 @@
         this.$Vue.createModal({modalData: this.deleteModal, confirmCallback: this.deleteRowOnConfirmed.bind(this, key)})
       },
       deleteRowOnConfirmed (key) {
-        this.tableDeleteRow({id: this.tableId, key, deleteUrl: this.actionUrls.deleteUrl})
+        this.tableDeleteRow({
+          id: this.tableId,
+          key,
+          deleteUrl: this.actionUrls && this.actionUrls.deleteUrl,
+          deleteAction: this.actions && this.actions.delete
+        })
       },
       itemFormat (item, key) {
         let headerItem = this.header[this.hasSn ? (key + 1) : key]

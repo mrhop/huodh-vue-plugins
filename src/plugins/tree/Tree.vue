@@ -3,31 +3,36 @@
     <ul v-if="isArray">
       <treeItem v-on:click="clickTransfer" v-for="item in treeDataLocal" :itemData="item" :key="item.id"
                 @addItem="addItemForm" @editItem="editItemForm" @deleteItem="doDeleteWarning" :editable="editable"
-                :actionUrls="actionUrls"/>
+                :actionUrls="actionUrls" :actions="actions"/>
     </ul>
     <ul v-else-if="treeDataLocal.title">
       <treeItem v-on:click="clickTransfer" :itemData="treeDataLocal" @addItem="addItemForm" @editItem="editItemForm"
                 @deleteItem="doDeleteWarning" :editable="editable"
-                :actionUrls="actionUrls"/>
+                :actionUrls="actionUrls" :actions="actions"/>
     </ul>
-    <modalTpl ref="modalAdd" v-if="editable&&actionUrls&&actionUrls.addUrl" :showFooter="false" type="primary"
+    <modalTpl ref="modalAdd" v-if="editable&&(actionUrls&&actionUrls.addUrl||actions&&actions.add)" :showFooter="false"
+              type="primary"
               :trigger="addModalTrigger">
       <span slot="header">添加子节点</span>
       <vform slot="body" :formRule="addFormRule" :id="'addTreeItem'+id" :actionUrls="addFormUrls"
+             :actions="addFormActions"
              v-on:afterSaved="addItem"></vform>
     </modalTpl>
-    <modalTpl ref="modalEdit" v-if="editable&&actionUrls&&actionUrls.editUrl" :showFooter="false" type="primary"
+    <modalTpl ref="modalEdit" v-if="editable&&(actionUrls&&actionUrls.editUrl||actions&&actions.edit)"
+              :showFooter="false" type="primary"
               :trigger="editModalTrigger">
       <span slot="header">更新节点</span>
       <vform slot="body" :formRule="editFormRule" :id="'editTreeItem'+id" :actionUrls="editFormUrls"
+             :actions="editFormActions"
              v-on:afterSaved="editItem"></vform>
     </modalTpl>
-    <modalTpl v-if="editable&&actionUrls&&actionUrls.deleteUrl" :confirmModal="true" type="danger"
+    <modalTpl v-if="editable&&(actionUrls&&actionUrls.deleteUrl||actions&&actions.delete)" :confirmModal="true"
+              type="danger"
               :trigger="deleteModalTrigger" v-on:confirmEvent="deleteItem">
       <span slot="header">删除节点</span>
       <div slot="body">删除节点，同时也会删除其下属的子节点，确认要删除吗？</div>
     </modalTpl>
-    <modalTpl v-if="editable&&actionUrls&&actionUrls.deleteUrl" type="danger"
+    <modalTpl v-if="editable&&(actionUrls&&actionUrls.deleteUrl||actions&&actions.delete)" type="danger"
               :trigger="deleteErrorTrigger">
       <span slot="header">{{errorDefault.header}}</span>
       <div slot="body">{{errorDefault.content}}</div>
@@ -49,6 +54,9 @@
         currentItemId: null,
         addFormUrls: this.editable && this.actionUrls && this.actionUrls.addUrl && {
           saveUrl: this.actionUrls.addUrl
+        },
+        addFormActions: this.editable && this.actions && this.actions.add && {
+          save: this.actions.add
         },
         addFormRule: this.editable && this.actionUrls && this.actionUrls.addUrl && {
           rules: {
@@ -80,6 +88,9 @@
         addModalTrigger: false,
         editFormUrls: this.editable && this.actionUrls && this.actionUrls.editUrl && {
           saveUrl: this.actionUrls.editUrl
+        },
+        editFormActions: this.editable && this.actions && this.actions.edit && {
+          save: this.actions.edit
         },
         editFormRule: this.editable && this.actionUrls && this.actionUrls.editUrl && {
           rules: {
@@ -159,6 +170,11 @@
         default: function () {
           return {}
         }
+      },
+      actions: {
+        default: function () {
+          return {}
+        }
       }
     },
     methods: lodash.assignIn({
@@ -190,7 +206,12 @@
       },
       deleteItem: function () {
         // 执行state的处理
-        this.treeItemDelete({id: this.id, deleteUrl: this.actionUrls.deleteUrl, itemId: this.currentItemId})
+        this.treeItemDelete({
+          id: this.id,
+          deleteUrl: this.actionUrls && this.actionUrls.deleteUrl,
+          deleteAction: this.actions && this.actions.delete,
+          itemId: this.currentItemId
+        })
       },
       clickTransfer: function (args) {
         this.$emit('click', args)
@@ -211,6 +232,16 @@
         this.treeInit({id: this.id, initUrl: this.treeData})
       } else {
         this.treeInit({id: this.id, treeData: this.treeData})
+      }
+      if (this.treeData) {
+        if (typeof this.treeData === 'string') {
+          this.treeInit({id: this.id, initUrl: this.treeData})
+        } else {
+          this.treeInit({id: this.id, treeData: this.treeData})
+        }
+      } else if (this.actions && this.actions.tree) {
+        var treeData = this.actions.tree()
+        this.treeInit({id: this.id, treeData})
       }
     }
   }

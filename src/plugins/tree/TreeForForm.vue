@@ -39,7 +39,7 @@
       editable: {
         default: false
       },
-      actionUrls: {
+      actions: {
         default: function () {
           return {}
         }
@@ -64,10 +64,14 @@
       treeItemForForm
     },
     created: function () {
-      if (this.treeData && typeof this.treeData === 'string') {
-        this.getTreeData()
-      } else {
-        this.treeDataLocal = this.treeData
+      if (this.treeData) {
+        if (typeof this.treeData === 'string') {
+          this.getTreeData()
+        } else {
+          this.treeDataLocal = this.treeData
+        }
+      } else if (this.actions && this.actions.tree) {
+        this.treeDataLocal = this.actions.tree()
       }
     }
   }

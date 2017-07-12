@@ -87,6 +87,11 @@
           return {}
         }
       },
+      actions: {
+        default: function () {
+          return {}
+        }
+      },
       formRule: {
         default: function () {
           return {}
@@ -95,15 +100,29 @@
     },
     methods: lodash.assignIn({
       resetForm () {
-        this.formReset({id: this.id, resetUrl: this.actionUrls.resetUrl})
+        this.formReset({
+          id: this.id,
+          resetUrl: this.actionUrls && this.actionUrls.resetUrl,
+          resetAction: this.actions && this.actions.reset
+        })
       },
       ruleChange (parameters) {
         if (this.actionUrls.ruleChangeUrl) {
-          this.formRuleChange({id: this.id, parameters, ruleChangeUrl: this.actionUrls.ruleChangeUrl})
+          this.formRuleChange({
+            id: this.id,
+            parameters,
+            ruleChangeUrl: this.actionUrls && this.actionUrls.ruleChangeUrl,
+            ruleChangeAction: this.actions && this.actions.ruleChange
+          })
         }
       },
       saveForm () {
-        this.formSave({id: this.id, key: this.key, saveUrl: this.actionUrls.saveUrl})
+        this.formSave({
+          id: this.id,
+          key: this.key,
+          saveUrl: this.actionUrls && this.actionUrls.saveUrl,
+          saveAction: this.actions && this.actions.save
+        })
       },
       backup () {
         if (this.actionUrls.backupUrl) {
@@ -155,7 +174,28 @@
         handler: function (val, oldVal) {
           if (val.initUrl && val.initUrl !== oldVal.initUrl) {
             console.log('do reinit')
-            this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
+            this.formInit({
+              id: this.id,
+              key: this.key,
+              initUrl: this.actionUrls && this.actionUrls.initUrl,
+              initAction: this.actions && this.actions.init,
+              formRule: this.formRule
+            })
+          }
+        },
+        deep: true
+      },
+      actions: {
+        handler: function (val, oldVal) {
+          if (val.init && val.init !== oldVal.init) {
+            console.log('do reinit')
+            this.formInit({
+              id: this.id,
+              key: this.key,
+              initUrl: this.actionUrls && this.actionUrls.initUrl,
+              initAction: this.actions && this.actions.init,
+              formRule: this.formRule
+            })
           }
         },
         deep: true
@@ -163,13 +203,25 @@
       formRule: {
         handler: function (val, oldVal) {
           console.log('do reinit')
-          this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
+          this.formInit({
+            id: this.id,
+            key: this.key,
+            initUrl: this.actionUrls && this.actionUrls.initUrl,
+            initAction: this.actions && this.actions.init,
+            formRule: this.formRule
+          })
         },
         deep: true
       }
     },
     created () {
-      this.formInit({id: this.id, key: this.key, initUrl: this.actionUrls.initUrl, formRule: this.formRule})
+      this.formInit({
+        id: this.id,
+        key: this.key,
+        initUrl: this.actionUrls && this.actionUrls.initUrl,
+        initAction: this.actions && this.actions.init,
+        formRule: this.formRule
+      })
     },
     destoryed () {
       if (!this.keepAlive) {

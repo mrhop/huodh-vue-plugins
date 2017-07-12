@@ -1,7 +1,7 @@
 <template>
   <tbody class="table-body">
   <tableRow v-for="(row,key) in rows" :row="row" :index="key" :action="action" :hasSn="hasSn"
-            :key="key" :header="header"
+            :key="key" :header="header" :actions="actions"
             :actionUrls="actionUrls" :tableId="tableId"/>
   </tbody>
 </template>
@@ -9,7 +9,7 @@
   import tableRow from './TableRow.vue'
   export default {
     name: 'v-table-body',
-    props: ['rows', 'action', 'header', 'actionUrls', 'hasSn', 'tableId'],
+    props: ['rows', 'action', 'header', 'actionUrls', 'actions', 'hasSn', 'tableId'],
     components: {
       tableRow
     }

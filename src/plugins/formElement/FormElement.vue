@@ -88,6 +88,7 @@
   </div>
 </template>
 <script>
+  import lodash from 'lodash'
   import datePicker from '../datePicker/DatePicker.vue'
   import treeForForm from '../tree/TreeForForm.vue'
   export default {
@@ -120,6 +121,41 @@
         }
         if (this.options.ruleChange) {
           this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
+        }
+        if (this.options.type !== 'file') {
+          for (var index in this.options.validate) {
+            let validateRule = this.options.validate[index]
+            let regExp = new RegExp(validateRule.regex)
+            if (!regExp.test(this.options.defaultValue)) {
+              this.options.validatedMsg = validateRule.errorMsg
+              break
+            }
+          }
+        } else {
+          var errorFileMsg = {}
+          if (this.options.validate) {
+            for (var index1 in this.options.validate) {
+              let validateRule = this.options.validate[index1]
+              let regExp = new RegExp(validateRule.regex)
+              for (var key in this.options.defaultValue) {
+                if (this.options.defaultValue[key] && !errorFileMsg[key] && !regExp.test(this.options.defaultValue[key][0].name)) {
+                  errorFileMsg[key] = validateRule.errorMsg
+                }
+              }
+            }
+          }
+          if (this.options.required && lodash.isEmpty(this.options.defaultValue)) {
+            errorFileMsg[this.options.name] = '不能为空'
+          } else if (this.options.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(this.options.defaultValue)) {
+            for (var fileIndex in this.options.defaultValue) {
+              if (this.options.defaultValue[fileIndex] && this.options.defaultValue[fileIndex][0] instanceof File) {
+                if (this.options.defaultValue[fileIndex][0].size > this.options.maxSize) {
+                  errorFileMsg[fileIndex] = '超过大小上限:' + this.options.maxSize + '字节'
+                }
+              }
+            }
+          }
+          this.options.validatedMsg = lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
         }
       },
       dealWithDate (value) {

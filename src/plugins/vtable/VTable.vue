@@ -19,7 +19,8 @@
       <table>
         <tableHeader :header="header" :action="action" :feature="feature" :pager="pager" :filters="filters"
                      :actionUrls="actionUrls" :tableId="id"/>
-        <tableBody :rows="rows" :action="action" :header="header" :actionUrls="actionUrls" :hasSn="hasSn"
+        <tableBody :rows="rows" :action="action" :actions="actions" :header="header" :actionUrls="actionUrls"
+                   :hasSn="hasSn"
                    :tableId="id"/>
         <tableFooter :feature="feature" :pager="pager" :totalCount="totalCount" :actionUrls="actionUrls"
                      :totalPage="totalPage" :currentPage="currentPage"
@@ -93,7 +94,7 @@
       }
     },
     components: {tableHeader, tableBody, tableFooter},
-    props: ['id', 'keepAlive', 'actionUrls'],
+    props: ['id', 'keepAlive', 'actionUrls', 'actions'],
     methods: lodash.assignIn({
       pageSizeChange (event) {
         let pager = {
@@ -101,7 +102,13 @@
           pageSize: parseInt(event.target.value)
         }
         let filters = this.filters
-        this.tableGetList({id: this.id, listUrl: this.actionUrls.listUrl, pager, filters})
+        this.tableGetList({
+          id: this.id,
+          listUrl: this.actionUrls && this.actionUrls.listUrl,
+          listAction: this.actions && this.actions.list,
+          pager,
+          filters
+        })
       },
       currentPageChange (currentPage) {
         console.log('currentPage' + currentPage)
@@ -110,7 +117,13 @@
           pageSize: this.pageSize
         }
         let filters = this.filters
-        this.tableGetList({id: this.id, listUrl: this.actionUrls.listUrl, pager, filters})
+        this.tableGetList({
+          id: this.id,
+          listUrl: this.actionUrls && this.actionUrls.listUrl,
+          listAction: this.actions && this.actions.list,
+          pager,
+          filters
+        })
       }
     }, mapActions([
       'tableInit',
@@ -121,9 +134,17 @@
     created () {
       if (this.keepAlive && this.header) {
         // do refresh
-        this.tableRefreshList({id: this.id, listUrl: this.actionUrls.listUrl})
+        this.tableRefreshList({
+          id: this.id,
+          listUrl: this.actionUrls && this.actionUrls.listUrl,
+          listAction: this.actions && this.actions.list
+        })
       } else {
-        this.tableInit({id: this.id, listUrl: this.actionUrls.listUrl})
+        this.tableInit({
+          id: this.id,
+          listUrl: this.actionUrls && this.actionUrls.listUrl,
+          listAction: this.actions && this.actions.list
+        })
       }
     },
     destoryed () {
@@ -134,14 +155,35 @@
     watch: {
       deleteRowSuccess: function () {
         if (this.deleteRowSuccess) {
-          this.tableRefreshList({id: this.id, listUrl: this.actionUrls.listUrl})
+          this.tableRefreshList({
+            id: this.id,
+            listUrl: this.actionUrls && this.actionUrls.listUrl,
+            listAction: this.actions && this.actions.list
+          })
         }
       },
       actionUrls: {
         handler: function (val, oldVal) {
           if (val.listUrl && val.listUrl !== oldVal.listUrl) {
             console.log('do init')
-            this.tableInit({id: this.id, listUrl: this.actionUrls.listUrl})
+            this.tableInit({
+              id: this.id,
+              listUrl: this.actionUrls && this.actionUrls.listUrl,
+              listAction: this.actions && this.actions.list
+            })
+          }
+        },
+        deep: true
+      },
+      actions: {
+        handler: function (val, oldVal) {
+          if (val.list && val.list !== oldVal.list) {
+            console.log('do init')
+            this.tableInit({
+              id: this.id,
+              listUrl: this.actionUrls && this.actionUrls.listUrl,
+              listAction: this.actions && this.actions.list
+            })
           }
         },
         deep: true

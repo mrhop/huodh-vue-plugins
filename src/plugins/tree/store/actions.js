@@ -21,16 +21,29 @@ export default {
   treeDelete: function ({commit, state}, {id}) {
     utilfuns.deleteTree(id)
   },
-  treeItemDelete: function ({commit, state}, {id, deleteUrl, itemId}) {
-    commit(types.TREE_ITEM_DELETE_REQUEST, {
-      [global.CALL_SERVER_PLUGIN]: {
-        id,
-        httpType: 'get',
-        endpoint: deleteUrl,
-        params: {id: itemId},
-        types: {success_type: types.TREE_ITEM_DELETE_SUCCESS, failure_type: types.TREE_ITEM_DELETE_FAILURE}
+  treeItemDelete: function ({commit, state}, {id, deleteUrl, deleteAction, itemId}) {
+    if (deleteUrl) {
+      commit(types.TREE_ITEM_DELETE_REQUEST, {
+        [global.CALL_SERVER_PLUGIN]: {
+          id,
+          httpType: 'get',
+          endpoint: deleteUrl,
+          params: {id: itemId},
+          types: {success_type: types.TREE_ITEM_DELETE_SUCCESS, failure_type: types.TREE_ITEM_DELETE_FAILURE}
+        }
+      })
+    } else if (deleteAction) {
+      var data = deleteAction({id: itemId})
+      if (data) {
+        commit(types.TREE_ITEM_DELETE_SUCCESS, {
+          id, data, callParameters: {id, deleteUrl, deleteAction, itemId}
+        })
+      } else {
+        commit(types.TREE_ITEM_DELETE_SUCCESS, {
+          id, error: 'error from outside action', callParameters: {id, deleteUrl, deleteAction, itemId}
+        })
       }
-    })
+    }
   },
   treeItemAdd: function ({commit, state}, {id, parentId, itemData}) {
     utilfuns.addTreeItem(id, parentId, itemData)
