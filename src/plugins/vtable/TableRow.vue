@@ -5,7 +5,9 @@
       </router-link>
       <span v-else>{{rowNum}}</span>
     </th>
-    <td v-for="(item,key) in row.value" :key="key" v-html="itemFormat(item,key)"></td>
+    <tableTd v-for="(item,key) in row.value" :item="item" :key="key" :tdKey="key" :rowKey="row.key" :header="header"
+             :hasSn="hasSn"
+             :actions="actions" :editable="editable"></tableTd>
     <td class="td-actions">
       <router-link v-if="action&&action.update" class="btn btn-info"
                    :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
@@ -21,6 +23,7 @@
 <script>
   import lodash from 'lodash'
   import {mapActions} from 'vuex'
+  import tableTd from './TableTd.vue'
 
   export default {
     name: 'v-table-row',
@@ -33,10 +36,11 @@
           showFooter: true,
           content: '确定要删除该条记录吗？',
           isConfirmModal: true
-        }
+        },
+        dataChanged: {}
       }
     },
-    props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'actions', 'tableId'],
+    props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'actions', 'editable', 'tableId'],
     methods: lodash.assignIn({
       getRowNum () {
         return this.index + 1
@@ -52,49 +56,11 @@
           deleteUrl: this.actionUrls && this.actionUrls.deleteUrl,
           deleteAction: this.actions && this.actions.delete
         })
-      },
-      itemFormat (item, key) {
-        let headerItem = this.header[this.hasSn ? (key + 1) : key]
-        if (headerItem) {
-          switch (headerItem.type) {
-            case 'date':
-              if (item) {
-                var dateTmp = new Date(+item)
-                return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
-              } else {
-                return ''
-              }
-            case 'file':
-              if (item) {
-                var returnFiles = ``
-                for (let index in item) {
-                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnFiles += `<a href='${item[index]}' target="_blank">${fileName}</a>`
-                }
-                return returnFiles
-              } else {
-                return ''
-              }
-            case 'image':
-              if (item) {
-                var returnImages = ``
-                for (let index in item) {
-                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnImages += `<a href='${item[index]}' target="_blank">${fileName}<img src='${item[index]}'/></a>`
-                }
-                return returnImages
-              } else {
-                return ''
-              }
-            default:
-              return item
-          }
-        }
-        return item
       }
     }, mapActions([
       'tableDeleteRow'
-    ]))
+    ])),
+    components: {tableTd}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

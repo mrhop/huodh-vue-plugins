@@ -19,7 +19,7 @@
       <table>
         <tableHeader :header="header" :action="action" :feature="feature" :pager="pager" :filters="filters"
                      :actionUrls="actionUrls" :tableId="id"/>
-        <tableBody :rows="rows" :action="action" :actions="actions" :header="header" :actionUrls="actionUrls"
+        <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header" :actionUrls="actionUrls"
                    :hasSn="hasSn"
                    :tableId="id"/>
         <tableFooter :feature="feature" :pager="pager" :totalCount="totalCount" :actionUrls="actionUrls"
@@ -94,7 +94,7 @@
       }
     },
     components: {tableHeader, tableBody, tableFooter},
-    props: ['id', 'keepAlive', 'actionUrls', 'actions'],
+    props: ['id', 'keepAlive', 'actionUrls', 'actions', 'editable'],
     methods: lodash.assignIn({
       pageSizeChange (event) {
         let pager = {
