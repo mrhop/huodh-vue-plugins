@@ -17,9 +17,10 @@
     </div>
     <div class="table-responsive">
       <table>
-        <tableHeader :header="header" :action="action" :feature="feature" :pager="pager" :filters="filters"
+        <tableHeader :header="headerConst" :action="action" :feature="feature" :pager="pager" :filters="filters"
                      :actionUrls="actionUrls" :tableId="id"/>
-        <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header" :actionUrls="actionUrls"
+        <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header"
+                   :actionUrls="actionUrls"
                    :hasSn="hasSn"
                    :tableId="id"/>
         <tableFooter :feature="feature" :pager="pager" :totalCount="totalCount" :actionUrls="actionUrls"
@@ -58,6 +59,9 @@
     computed: {
       header () {
         return this.$store.getters.tableHeader(this.id)
+      },
+      headerConst () {
+        return this.$store.getters.tableHeaderConst(this.id)
       },
       action () {
         return this.$store.getters.tableAction(this.id)

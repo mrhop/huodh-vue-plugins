@@ -217,11 +217,23 @@
       elementValue: function () {
         this.dealWithData()
       },
-      options: function () {
-        if (!this.options.validatedMsg) {
-          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
-          this.treeValue = this.options.defaultLabel || ''
-        }
+//      options: function () {
+//        if (!this.options.validatedMsg) {
+//          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
+//          this.treeValue = this.options.defaultLabel || ''
+//        }
+//      },
+      options: {
+        handler: function (val, oldVal) {
+          if (!val.validatedMsg) {
+            this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
+            this.treeValue = this.options.defaultLabel || ''
+          }
+          if (val.defaultValue !== oldVal.defaultValue) {
+            this.elementValue = val.defaultValue
+          }
+        },
+        deep: true
       }
     },
     mounted () {

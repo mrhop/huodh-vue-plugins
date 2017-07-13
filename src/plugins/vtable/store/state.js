@@ -7,6 +7,7 @@ const state = {
   default: {
     rules: {
       header: [],
+      headerConst: [],
       action: {},
       feature: {}
     },

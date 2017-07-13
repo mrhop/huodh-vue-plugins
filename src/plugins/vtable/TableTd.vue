@@ -1,17 +1,19 @@
 <template>
   <td @click="itemClick"><span v-show="!showEdit">{{dataFormated}}</span><span v-if="editable&&headerItem.editable"
                                                                                v-show="showEdit"><formElement
-    :dataFromParent="dataChanged" :options="headerItem"/><button @click="itemEdit(true)">确定</button><button
-    @click="itemEdit(false)">取消</button></span></td>
+    :dataFromParent="dataChanged" :options="headerItem"/><button @click.stop="itemEdit(true)">确定</button><button
+    @click.stop="itemEdit(false)">取消</button></span></td>
 </template>
 <script>
   import formElement from '../formElement/FormElement.vue'
+  import Vue from 'vue'
   export default {
     name: 'v-table-row',
     data () {
       return {
         dataChanged: {},
-        showEdit: false
+        showEdit: false,
+        itemLocal: this.item
       }
     },
     computed: {
@@ -23,39 +25,39 @@
         if (headerItem) {
           switch (headerItem.type) {
             case 'date':
-              if (this.item) {
-                var dateTmp = new Date(+this.item)
+              if (this.itemLocal) {
+                var dateTmp = new Date(+this.itemLocal)
                 return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
               } else {
                 return ''
               }
             case 'file':
-              if (this.item) {
+              if (this.itemLocal) {
                 var returnFiles = ``
-                for (let index in this.item) {
-                  let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnFiles += `<a href='${this.item[index]}' target="_blank">${fileName}</a>`
+                for (let index in this.itemLocal) {
+                  let fileName = this.itemLocal[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnFiles += `<a href='${this.itemLocal[index]}' target="_blank">${fileName}</a>`
                 }
                 return returnFiles
               } else {
                 return ''
               }
             case 'image':
-              if (this.item) {
+              if (this.itemLocal) {
                 var returnImages = ``
-                for (let index in this.item) {
-                  let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnImages += `<a href='${this.item[index]}' target="_blank">${fileName}<img src='${this.item[index]}'/></a>`
+                for (let index in this.itemLocal) {
+                  let fileName = this.itemLocal[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnImages += `<a href='${this.itemLocal[index]}' target="_blank">${fileName}<img src='${this.itemLocal[index]}'/></a>`
                 }
                 return returnImages
               } else {
                 return ''
               }
             default:
-              return this.item
+              return this.itemLocal
           }
         }
-        return this.item
+        return this.itemLocal
       }
     },
     props: ['rowKey', 'item', 'tdKey', 'header', 'hasSn', 'actions', 'editable'],
@@ -65,12 +67,12 @@
           if (this.actions && this.actions.edit) {
             var returnData = this.actions.edit({key: this.rowKey, data: this.dataChanged})
             if (returnData !== false) {
-              this.item = this.headerItem.defaultValue
+              this.itemLocal = this.headerItem.defaultValue
               delete this.headerItem.defaultValue
               this.showEdit = false
             }
           } else {
-            this.item = this.headerItem.defaultValue
+            this.itemLocal = this.headerItem.defaultValue
             delete this.headerItem.defaultValue
             this.showEdit = false
           }
@@ -81,12 +83,25 @@
       },
       itemClick () {
         if (!this.showEdit && this.editable && this.headerItem.editable) {
-          this.headerItem.defaultValue = this.item
+          Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
           this.showEdit = true
+        }
+      },
+      close (e) {
+        if (!this.$el.contains(e.target)) {
+          this.showEdit = false
         }
       }
     },
-    components: {formElement}
+    components: {formElement},
+    mounted () {
+      this.$nextTick(function () {
+        window.addEventListener('click', this.close)
+      })
+    },
+    beforeDestroy () {
+      window.removeEventListener('click', this.close)
+    }
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

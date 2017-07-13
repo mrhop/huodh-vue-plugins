@@ -271,6 +271,58 @@
         this.tmpEndYear = now.getFullYear()
         this.tmpEndMonth = now.getMonth()
         this.tmpEndDate = now.getDate()
+      },
+      initDate () {
+        let minArr = this.min.split('-')
+        this.minYear = Number(minArr[0])
+        this.minMonth = Number(minArr[1])
+        this.minDate = Number(minArr[2])
+        let maxArr = this.max.split('-')
+        this.maxYear = Number(maxArr[0])
+        this.maxMonth = Number(maxArr[1])
+        this.maxDate = Number(maxArr[2])
+        if (this.value) {
+          if (this.value instanceof Array) {
+            //  RANGE
+            var returnArr = []
+            for (var index in this.value) {
+              var dateTmp = this.value[index]
+              if (typeof dateTmp === 'string') {
+                returnArr.push(dateTmp)
+              } else if (typeof dateTmp === 'number') {
+                var dateToAdd = new Date(+dateTmp)
+                returnArr.push(dateToAdd.getFullYear() + '-' + ('0' + (dateToAdd.getMonth() + 1)).slice(-2) + '-' + ('0' + dateToAdd.getDate()).slice(-2))
+              }
+            }
+            this.valueFormat = returnArr
+            let rangeStart = this.valueFormat[0].split('-')
+            let rangeEnd = this.valueFormat[1].split('-')
+            this.year = Number(rangeStart[0])
+            this.month = Number(rangeStart[1]) - 1
+            this.tmpYear = Number(rangeStart[0])
+            this.tmpMonth = Number(rangeStart[1]) - 1
+            this.date = Number(rangeStart[2])
+            this.tmpStartYear = Number(rangeStart[0])
+            this.tmpStartMonth = Number(rangeStart[1]) - 1
+            this.tmpStartDate = Number(rangeStart[2])
+            this.tmpEndYear = Number(rangeEnd[0])
+            this.tmpEndMonth = Number(rangeEnd[1]) - 1
+            this.tmpEndDate = Number(rangeEnd[2])
+          } else {
+            if (typeof this.value === 'string') {
+              this.valueFormat = this.value
+            } else if (typeof this.value === 'number') {
+              let dateTemp = new Date(+this.value)
+              this.valueFormat = dateTemp.getFullYear() + '-' + ('0' + (dateTemp.getMonth() + 1)).slice(-2) + '-' + ('0' + dateTemp.getDate()).slice(-2)
+            }
+            let dateStrArr = this.valueFormat.split('-')
+            this.year = Number(dateStrArr[0])
+            this.month = Number(dateStrArr[1]) - 1
+            this.tmpYear = Number(dateStrArr[0])
+            this.tmpMonth = Number(dateStrArr[1]) - 1
+            this.date = Number(dateStrArr[2])
+          }
+        }
       }
     },
     watch: {
@@ -294,6 +346,9 @@
         if (!newVal && Object.prototype.toString.call(this.value).slice(8, -1) === 'Array') {
           this.$emit('input', '')
         }
+      },
+      value () {
+        this.initDate()
       }
     },
     computed: {
@@ -371,56 +426,7 @@
         } else {
           this.coordinates = {left: '0', top: `${window.getComputedStyle(this.$el.children[0]).offsetHeight + 4}px`}
         }
-        let minArr = this.min.split('-')
-        this.minYear = Number(minArr[0])
-        this.minMonth = Number(minArr[1])
-        this.minDate = Number(minArr[2])
-        let maxArr = this.max.split('-')
-        this.maxYear = Number(maxArr[0])
-        this.maxMonth = Number(maxArr[1])
-        this.maxDate = Number(maxArr[2])
-        if (this.value) {
-          if (this.value instanceof Array) {
-            //  RANGE
-            var returnArr = []
-            for (var index in this.value) {
-              var dateTmp = this.value[index]
-              if (typeof dateTmp === 'string') {
-                returnArr.push(dateTmp)
-              } else if (typeof dateTmp === 'number') {
-                var dateToAdd = new Date(+dateTmp)
-                returnArr.push(dateToAdd.getFullYear() + '-' + ('0' + (dateToAdd.getMonth() + 1)).slice(-2) + '-' + ('0' + dateToAdd.getDate()).slice(-2))
-              }
-            }
-            this.valueFormat = returnArr
-            let rangeStart = this.valueFormat[0].split('-')
-            let rangeEnd = this.valueFormat[1].split('-')
-            this.year = Number(rangeStart[0])
-            this.month = Number(rangeStart[1]) - 1
-            this.tmpYear = Number(rangeStart[0])
-            this.tmpMonth = Number(rangeStart[1]) - 1
-            this.date = Number(rangeStart[2])
-            this.tmpStartYear = Number(rangeStart[0])
-            this.tmpStartMonth = Number(rangeStart[1]) - 1
-            this.tmpStartDate = Number(rangeStart[2])
-            this.tmpEndYear = Number(rangeEnd[0])
-            this.tmpEndMonth = Number(rangeEnd[1]) - 1
-            this.tmpEndDate = Number(rangeEnd[2])
-          } else {
-            if (typeof this.value === 'string') {
-              this.valueFormat = this.value
-            } else if (typeof this.value === 'number') {
-              let dateTemp = new Date(+this.value)
-              this.valueFormat = dateTemp.getFullYear() + '-' + ('0' + (dateTemp.getMonth() + 1)).slice(-2) + '-' + ('0' + dateTemp.getDate()).slice(-2)
-            }
-            let dateStrArr = this.valueFormat.split('-')
-            this.year = Number(dateStrArr[0])
-            this.month = Number(dateStrArr[1]) - 1
-            this.tmpYear = Number(dateStrArr[0])
-            this.tmpMonth = Number(dateStrArr[1]) - 1
-            this.date = Number(dateStrArr[2])
-          }
-        }
+        this.initDate()
         window.addEventListener('click', this.close)
       })
     },

@@ -8,6 +8,10 @@ export default{
     let data = utilfuns.getTable(id)
     return data.rules.header || state.default.rules.header
   },
+  tableHeaderConst: (state, getters) => (id) => {
+    let data = utilfuns.getTable(id)
+    return data.rules.headerConst || state.default.rules.headerConst
+  },
   tableAction: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
     return data.rules.action || state.default.rules.action

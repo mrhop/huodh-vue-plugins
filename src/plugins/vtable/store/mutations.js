@@ -1,11 +1,18 @@
 /**
  * Created by Donghui Huo on 2017/3/29.
  */
+import Vue from 'vue'
+import lodash from 'lodash'
 import {types, utilfuns} from './state'
 export default {
   [types.TABLE_REQUEST] (state) {
   },
   [types.TABLE_SUCCESS] (state, {id, data, callParameters}) {
+    if (callParameters.init || callParameters.data && callParameters.data.init) {
+      if (data.rules && data.rules.header) {
+        Vue.set(data.rules, 'headerConst', lodash.cloneDeep(data.rules.header))
+      }
+    }
     utilfuns.setTable(id, data, {operation: 'getTable'})
   },
   [types.TABLE_FAILURE] (state, {id, error}) {
