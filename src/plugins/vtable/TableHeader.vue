@@ -48,6 +48,7 @@
   thead.table-header {
     tr {
       th {
+        position: relative;
         border-bottom: 1px solid #ccc;
         padding: 2px;
         &.theader-actions {

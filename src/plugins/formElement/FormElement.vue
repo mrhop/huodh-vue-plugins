@@ -13,7 +13,7 @@
       type="button" class="form-control" :name="options.name"
       :value="options.defaultValue" ref="formElementEl" @click="buttonClick"/>
     <div :class="['file-block',options.validatedMsg&&options.validatedMsg[options.name+n]?'file-error':'']"
-         v-else-if="options.type==='file'" v-for="n in (options.quantity||1)">
+         v-else-if="options.type==='file'||options.type==='image'" v-for="n in (options.quantity||1)">
       <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
              ref="formElementEl"/>
       <a v-if="options.path&&options.path[n-1]" :href="options.path[n-1]" target="_blank">{{options.name+(options.quantity?n:'')}}</a>
@@ -82,8 +82,8 @@
         <treeForForm v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
       </transition>
     </div>
-    <p v-if="options.validatedMsg&&options.type!=='file'">{{options.validatedMsg}}</p>
-    <p v-if="options.type==='file'&&options.validatedMsg&&options.validatedMsg[options.name]">
+    <p v-if="options.validatedMsg&&options.type!=='file'&&options.type!=='image'">{{options.validatedMsg}}</p>
+    <p v-if="(options.type==='file'||options.type==='image')&&options.validatedMsg&&options.validatedMsg[options.name]">
       {{options.validatedMsg[options.name]}}</p>
   </div>
 </template>
@@ -95,7 +95,7 @@
     name: 'form-element',
     data () {
       return {
-        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : '')),
+        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : '')),
         showSelectCancel: false,
         showTree: false,
         treeValue: this.options.defaultLabel || ''
@@ -122,7 +122,7 @@
         if (this.options.ruleChange) {
           this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
         }
-        if (this.options.type !== 'file') {
+        if (this.options.type !== 'file' && this.options.type !== 'image') {
           for (var index in this.options.validate) {
             let validateRule = this.options.validate[index]
             let regExp = new RegExp(validateRule.regex)
