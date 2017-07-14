@@ -1,9 +1,9 @@
 <template>
   <thead class="table-header" v-if="header">
   <tr>
-    <th v-for="(item, key) in header" :key="key">
-      <a><span>{{item.title}}</span></a>
-    </th>
+    <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item" :pager="pager" :filters="filters"
+                   :sorts="sorts"
+                   :actionUrls="actionUrls" :tableId="id"/>
     <th class="theader-actions">操作</th>
   </tr>
   <tr v-if="feature&&feature.filter" class="form-group">
@@ -20,26 +20,29 @@
   import lodash from 'lodash'
   import {mapActions} from 'vuex'
   import formElement from '../formElement/FormElement.vue'
+  import tableHeaderTh from './TableHeaderTh.vue'
   export default {
     name: 'v-table-header',
     data () {
       return {
-        pageSize: this.pager ? this.pager.pageSize : 15
+        pageSize: this.pager ? this.pager.pageSize : 15,
+        sortOrderType: ''
       }
     },
-    props: ['header', 'action', 'feature', 'pager', 'filters', 'actionUrls', 'tableId'],
+    props: ['header', 'action', 'feature', 'pager', 'filters', 'sorts', 'actionUrls', 'tableId'],
     methods: lodash.assignIn({
       filtersChange (target) {
         lodash.debounce(function () {
           let pager = this.pager
           let filters = this.filters
-          this.tableGetList({id: this.tableId, listUrl: this.actionUrls.listUrl, pager, filters})
+          let sorts = this.sorts
+          this.tableGetList({id: this.tableId, listUrl: this.actionUrls.listUrl, pager, filters, sorts})
         }.bind(this), 500)()
       }
     }, mapActions([
       'tableGetList'
     ])),
-    components: {formElement}
+    components: {tableHeaderTh, formElement}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

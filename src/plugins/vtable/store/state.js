@@ -2,6 +2,7 @@
  * Created by Donghui Huo on 2017/3/29.
  */
 import lodash from 'lodash'
+import Vue from 'vue'
 const state = {
   dataArray: [],
   default: {
@@ -18,7 +19,8 @@ const state = {
         pageSize: 10,
         currentPage: 1
       },
-      filters: {}
+      filters: {},
+      sorts: {}
     },
     operation: 'getTable'
   }
@@ -43,6 +45,8 @@ const utilfuns = {
     return data
   },
   setTable (id, data, additionalParams) {
+    additionalParams = additionalParams?additionalParams:{}
+    additionalParams.timestampVersion = new Date().getDate()
     let dataLocal = state.dataArray.find(i => i.id === id)
     if (!dataLocal) {
       dataLocal = lodash.assign({}, state.default, data, additionalParams)
@@ -51,6 +55,7 @@ const utilfuns = {
     } else {
       lodash.assign(dataLocal, data, additionalParams)
     }
+    dataLocal
     return dataLocal
   },
   deleteTable (id) {

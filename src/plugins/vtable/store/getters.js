@@ -40,6 +40,10 @@ export default{
     let data = utilfuns.getTable(id)
     return data.data.filters || state.default.data.filters
   },
+  tableSorts: (state, getters) => (id) => {
+    let data = utilfuns.getTable(id)
+    return data.data.sorts || state.default.data.sorts
+  },
   tableHasSn: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
     var snIndex = lodash.findIndex(data.rules.header, function (o) {

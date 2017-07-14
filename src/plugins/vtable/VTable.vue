@@ -17,7 +17,7 @@
     </div>
     <div class="table-responsive">
       <table>
-        <tableHeader :header="headerConst" :action="action" :feature="feature" :pager="pager" :filters="filters"
+        <tableHeader :header="headerConst" :action="action" :feature="feature" :pager="pager" :filters="filters" :sorts="sorts"
                      :actionUrls="actionUrls" :tableId="id"/>
         <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header"
                    :actionUrls="actionUrls"
@@ -84,6 +84,9 @@
       filters () {
         return this.$store.getters.tableFilters(this.id)
       },
+      sorts () {
+        return this.$store.getters.tableSorts(this.id)
+      },
       hasSn () {
         return this.$store.getters.tableHasSn(this.id)
       },
@@ -106,12 +109,14 @@
           pageSize: parseInt(event.target.value)
         }
         let filters = this.filters
+        let sorts = this.sorts
         this.tableGetList({
           id: this.id,
           listUrl: this.actionUrls && this.actionUrls.listUrl,
           listAction: this.actions && this.actions.list,
           pager,
-          filters
+          filters,
+          sorts
         })
       },
       currentPageChange (currentPage) {
@@ -121,12 +126,14 @@
           pageSize: this.pageSize
         }
         let filters = this.filters
+        let sorts = this.sorts
         this.tableGetList({
           id: this.id,
           listUrl: this.actionUrls && this.actionUrls.listUrl,
           listAction: this.actions && this.actions.list,
           pager,
-          filters
+          filters,
+          sorts
         })
       }
     }, mapActions([

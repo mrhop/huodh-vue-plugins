@@ -33,14 +33,18 @@ export default {
             id,
             httpType: 'post',
             endpoint: listUrl,
-            data: {pager: dataLocal.data.pager, filters: dataLocal.data.filters},
+            data: {pager: dataLocal.data.pager, filters: dataLocal.data.filters, sorts: dataLocal.data.sorts},
             types: {success_type: types.TABLE_SUCCESS, failure_type: types.TABLE_FAILURE}
           }
         })
       } else if (listAction) {
-        var data = listAction({pager: dataLocal.data.pager, filters: dataLocal.data.filters})
+        var data = listAction({
+          pager: dataLocal.data.pager,
+          filters: dataLocal.data.filters,
+          sorts: dataLocal.data.sorts
+        })
         if (data) {
-          commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {pager: state.default.data.pager, init: true}})
+          commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {}})
         } else {
           commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
         }
@@ -49,7 +53,7 @@ export default {
       this.init({commit, state}, {id, listUrl, listAction})
     }
   },
-  tableGetList: function ({commit, state}, {id, listUrl, listAction, pager, filters}) {
+  tableGetList: function ({commit, state}, {id, listUrl, listAction, pager, filters, sorts}) {
     // DO GET list 操作，根据分页，filters等,此时不需要 rule，仅需要返回数据即可
     console.log('table - get list')
     if (listUrl) {
@@ -58,14 +62,14 @@ export default {
           id,
           httpType: 'post',
           endpoint: listUrl,
-          data: {pager, filters},
+          data: {pager, filters, sorts},
           types: {success_type: types.TABLE_SUCCESS, failure_type: types.TABLE_FAILURE}
         }
       })
     } else if (listAction) {
-      var data = listAction({pager, filters})
+      var data = listAction({pager, filters, sorts})
       if (data) {
-        commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {pager: state.default.data.pager, init: true}})
+        commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {}})
       } else {
         commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
       }

@@ -157,6 +157,7 @@
   @import "../../scss/import.scss";
 
   td {
+    position: relative;
     border-bottom: 1px solid #ccc;
     padding: 2px;
     a {
