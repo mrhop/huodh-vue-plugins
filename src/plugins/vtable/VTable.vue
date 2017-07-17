@@ -19,7 +19,7 @@
       <table>
         <tableHeader :header="headerConst" :action="action" :feature="feature" :pager="pager" :filters="filters"
                      :sorts="sorts"
-                     :actionUrls="actionUrls" :tableId="id"/>
+                     :actionUrls="actionUrls" :actions="actions" :tableId="id"/>
         <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header"
                    :actionUrls="actionUrls"
                    :hasSn="hasSn"

@@ -1,9 +1,8 @@
 <template>
   <thead class="table-header" v-if="header">
   <tr>
-    <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item" :pager="pager" :filters="filters"
-                   :sorts="sorts"
-                   :actionUrls="actionUrls" :tableId="id"/>
+    <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item"
+                   v-on:sortIt="filtersChange"/>
     <th class="theader-actions">操作</th>
   </tr>
   <tr v-if="feature&&feature.filter" class="form-group">
@@ -26,17 +25,24 @@
     data () {
       return {
         pageSize: this.pager ? this.pager.pageSize : 15,
-        sortOrderType: ''
+        sortOrderType: '',
       }
     },
-    props: ['header', 'action', 'feature', 'pager', 'filters', 'sorts', 'actionUrls', 'tableId'],
+    props: ['header', 'action', 'feature', 'pager', 'filters', 'sorts', 'actionUrls', 'actions', 'tableId'],
     methods: lodash.assignIn({
       filtersChange (target) {
         lodash.debounce(function () {
           let pager = this.pager
           let filters = this.filters
           let sorts = this.sorts
-          this.tableGetList({id: this.tableId, listUrl: this.actionUrls.listUrl, pager, filters, sorts})
+          this.tableGetList({
+            id: this.tableId,
+            listUrl: this.actionUrls && this.actionUrls.listUrl,
+            listAction: this.actions && this.actions.list,
+            pager,
+            filters,
+            sorts
+          })
         }.bind(this), 500)()
       }
     }, mapActions([

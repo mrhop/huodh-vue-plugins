@@ -10,31 +10,29 @@
   import {mapActions} from 'vuex'
   export default {
     name: 'v-table-header',
-    data () {
-      return {
-        sortOrderType: ''
-      }
-    },
-    props: ['item', 'pager', 'filters', 'sorts', 'actionUrls', 'tableId'],
+    props: ['item'],
     methods: lodash.assignIn({
       sortChange () {
         if (this.sorts[this.item.name]) {
           this.sorts[this.item.name] = this.sorts[this.item.name] === 'asc' ? 'desc' : 'asc'
-          this.sortOrderType = this.sorts[this.item.name] === 'asc' ? 'glyphicon-menu-up' : 'glyphicon-menu-down'
         } else {
           this.sorts[this.item.name] = this.sorts[this.item.name] = 'asc'
-          this.sortOrderType = 'glyphicon-menu-up'
         }
-        lodash.debounce(function () {
-          let pager = this.pager
-          let filters = this.filters
-          let sorts = this.sorts
-          this.tableGetList({id: this.tableId, listUrl: this.actionUrls.listUrl, pager, filters, sorts})
-        }.bind(this), 500)()
+        this.$emit('sortIt')
       }
     }, mapActions([
       'tableGetList'
-    ]))
+    ])),
+    computed: {
+      sortOrderType()
+      {
+        if (this.sorts[this.item.name]) {
+          return this.sorts[this.item.name] === 'asc' ? 'glyphicon-menu-up' : 'glyphicon-menu-down'
+        } else {
+          return ''
+        }
+      }
+    }
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">
