@@ -49,6 +49,12 @@
         this.available = false
         this.$emit('closeEvent')
       },
+      closeModalWithEsc (e) {
+        if ((e.keyCode || e.which) === 27) {
+          this.available = false
+          this.$emit('closeEvent')
+        }
+      },
       confirm () {
         this.available = false
         this.$emit('confirmEvent')
@@ -58,6 +64,12 @@
       trigger: function () {
         this.available = true
       }
+    },
+    mounted () {
+      document.addEventListener('keyup', this.closeModalWithEsc)
+    },
+    beforeDestroy () {
+      document.removeEventListener('keyup', this.closeModalWithEsc)
     }
   }
 </script>

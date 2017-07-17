@@ -37,6 +37,7 @@
     },
     mounted () {
       this.available = true
+      document.addEventListener('keyup', this.closeModalWithEsc)
     },
     updated () {
       if (this.available) {
@@ -76,12 +77,20 @@
       closeModal () {
         this.available = false
       },
+      closeModalWithEsc (e) {
+        if ((e.keyCode || e.which) === 27) {
+          this.available = false
+        }
+      },
       confirm () {
         if (this.confirmCallback && typeof this.confirmCallback === 'function') {
           this.confirmCallback()
         }
         this.closeModal()
       }
+    },
+    beforeDestroy () {
+      document.removeEventListener('keyup', this.closeModalWithEsc)
     }
   }
 </script>

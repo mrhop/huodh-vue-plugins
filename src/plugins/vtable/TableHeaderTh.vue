@@ -10,7 +10,7 @@
   import {mapActions} from 'vuex'
   export default {
     name: 'v-table-header',
-    props: ['item'],
+    props: ['item', 'sorts'],
     methods: lodash.assignIn({
       sortChange () {
         if (this.sorts[this.item.name]) {
@@ -24,8 +24,7 @@
       'tableGetList'
     ])),
     computed: {
-      sortOrderType()
-      {
+      sortOrderType () {
         if (this.sorts[this.item.name]) {
           return this.sorts[this.item.name] === 'asc' ? 'glyphicon-menu-up' : 'glyphicon-menu-down'
         } else {

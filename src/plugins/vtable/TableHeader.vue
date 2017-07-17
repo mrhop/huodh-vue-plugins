@@ -1,7 +1,7 @@
 <template>
   <thead class="table-header" v-if="header">
   <tr>
-    <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item"
+    <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item" :sorts="sorts"
                    v-on:sortIt="filtersChange"/>
     <th class="theader-actions">操作</th>
   </tr>
@@ -25,7 +25,7 @@
     data () {
       return {
         pageSize: this.pager ? this.pager.pageSize : 15,
-        sortOrderType: '',
+        sortOrderType: ''
       }
     },
     props: ['header', 'action', 'feature', 'pager', 'filters', 'sorts', 'actionUrls', 'actions', 'tableId'],
@@ -53,7 +53,6 @@
 </script>
 <style rel="stylesheet/scss" lang="scss">
   @import "../../scss/import.scss";
-
   thead.table-header {
     tr {
       th {
