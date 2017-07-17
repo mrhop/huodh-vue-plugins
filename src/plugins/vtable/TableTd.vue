@@ -13,8 +13,7 @@
     data () {
       return {
         dataChanged: {},
-        showEdit: false,
-        itemLocal: this.item
+        showEdit: false
       }
     },
     computed: {
@@ -26,81 +25,81 @@
         if (headerItem) {
           switch (headerItem.type) {
             case 'date':
-              if (this.itemLocal) {
-                var dateTmp = new Date(+this.itemLocal)
+              if (this.item) {
+                var dateTmp = new Date(+this.item)
                 return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
               } else {
                 return ''
               }
             case 'file':
-              if (this.itemLocal) {
+              if (this.item) {
                 var returnFiles = ``
-                if (this.itemLocal instanceof Array) {
-                  for (let index in this.itemLocal) {
-                    let fileName = this.itemLocal[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                    returnFiles += `<a href='${this.itemLocal[index]}' target="_blank">${fileName}</a>`
+                if (this.item instanceof Array) {
+                  for (let index in this.item) {
+                    let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                    returnFiles += `<a href='${this.item[index]}' target="_blank">${fileName}</a>`
                   }
                 } else {
-                  let fileName = this.itemLocal.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnFiles += `<a href='${this.itemLocal}' target="_blank">${fileName}</a>`
+                  let fileName = this.item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnFiles += `<a href='${this.item}' target="_blank">${fileName}</a>`
                 }
                 return returnFiles
               } else {
                 return ''
               }
             case 'image':
-              if (this.itemLocal) {
+              if (this.item) {
                 var returnImages = ``
-                if (this.itemLocal instanceof Array) {
-                  for (let index in this.itemLocal) {
-                    let fileName = this.itemLocal[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                    returnImages += `<a href='${this.itemLocal[index]}' target="_blank">${fileName}<img src='${this.itemLocal[index]}'/></a>`
+                if (this.item instanceof Array) {
+                  for (let index in this.item) {
+                    let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                    returnImages += `<a href='${this.item[index]}' target="_blank">${fileName}<img src='${this.item[index]}'/></a>`
                   }
                 } else {
-                  let fileName = this.itemLocal.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnImages += `<a href='${this.itemLocal}' target="_blank">${fileName}<img src='${this.itemLocal}'/></a>`
+                  let fileName = this.item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnImages += `<a href='${this.item}' target="_blank">${fileName}<img src='${this.item}'/></a>`
                 }
                 return returnImages
               } else {
                 return ''
               }
             case 'checkbox':
-              if (this.itemLocal) {
+              if (this.item) {
                 if (headerItem.items) {
                   var itemTemp = []
                   for (var index in headerItem.items) {
-                    if (this.itemLocal.indexOf(headerItem.items[index].value) > -1) {
+                    if (this.item.indexOf(headerItem.items[index].value) > -1) {
                       itemTemp.push(headerItem.items[index].label)
                     }
                   }
                   return lodash.flatten(itemTemp)
                 } else {
-                  return lodash.flatten(this.itemLocal)
+                  return lodash.flatten(this.item)
                 }
               } else {
                 return ''
               }
             case 'select':
             case 'radio':
-              if (this.itemLocal) {
+              if (this.item) {
                 if (headerItem.items) {
                   for (var index1 in headerItem.items) {
-                    if (this.itemLocal === headerItem.items[index1].value) {
+                    if (this.item === headerItem.items[index1].value) {
                       return headerItem.items[index1].label
                     }
                   }
-                  return this.itemLocal
+                  return this.item
                 } else {
-                  return this.itemLocal
+                  return this.item
                 }
               } else {
                 return ''
               }
             default:
-              return this.itemLocal
+              return this.item
           }
         }
-        return this.itemLocal
+        return this.item
       }
     },
     props: ['rowKey', 'item', 'tdKey', 'header', 'hasSn', 'actions', 'editable'],
@@ -111,15 +110,15 @@
             var returnData = this.actions.edit({key: this.rowKey, data: this.dataChanged, headerItem: this.headerItem})
             if (returnData !== false) {
               if (this.headerItem.type === 'file' || this.headerItem.type === 'image') {
-                this.itemLocal = returnData
+                this.item = returnData
               } else {
-                this.itemLocal = this.headerItem.defaultValue
+                this.item = this.headerItem.defaultValue
                 delete this.headerItem.defaultValue
               }
               this.showEdit = false
             }
           } else {
-            this.itemLocal = this.headerItem.defaultValue
+            this.item = this.headerItem.defaultValue
             delete this.headerItem.defaultValue
             this.showEdit = false
           }
@@ -131,7 +130,7 @@
       itemClick () {
         if (!this.showEdit && this.editable && this.headerItem.editable) {
           if (this.headerItem.type !== 'file' && this.headerItem.type !== 'image') {
-            Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
+            Vue.set(this.headerItem, 'defaultValue', this.item)
           }
           this.showEdit = true
         }

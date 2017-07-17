@@ -7,6 +7,7 @@
 </template>
 <script>
   import tableRow from './TableRow.vue'
+
   export default {
     name: 'v-table-body',
     props: ['rows', 'action', 'header', 'actionUrls', 'actions', 'hasSn', 'editable', 'tableId'],

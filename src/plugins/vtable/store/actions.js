@@ -2,6 +2,7 @@
  * Created by Donghui Huo on 2017/3/29.
  */
 import {types, utilfuns} from './state'
+// import Vue from 'vue'
 export default {
   tableInit: function ({commit, state}, {id, listUrl, listAction}) {
     if (listUrl) {

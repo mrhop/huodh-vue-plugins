@@ -5,9 +5,10 @@
       </router-link>
       <span v-else>{{rowNum}}</span>
     </th>
+    <!--<td v-for="(item,key) in row.value" :key="key" v-html="itemFormat(item,key)"></td>-->
     <tableTd v-for="(item,key) in row.value" :item="item" :key="key" :tdKey="key" :rowKey="row.key" :header="header"
-             :hasSn="hasSn"
-             :actions="actions" :editable="editable"></tableTd>
+    :hasSn="hasSn"
+    :actions="actions" :editable="editable"></tableTd>
     <td class="td-actions">
       <router-link v-if="action&&action.update" class="btn btn-info"
                    :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
@@ -36,8 +37,7 @@
           showFooter: true,
           content: '确定要删除该条记录吗？',
           isConfirmModal: true
-        },
-        dataChanged: {}
+        }
       }
     },
     props: ['row', 'index', 'action', 'header', 'hasSn', 'actionUrls', 'actions', 'editable', 'tableId'],

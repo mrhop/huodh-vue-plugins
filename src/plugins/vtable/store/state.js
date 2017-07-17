@@ -45,8 +45,6 @@ const utilfuns = {
     return data
   },
   setTable (id, data, additionalParams) {
-    additionalParams = additionalParams?additionalParams:{}
-    additionalParams.timestampVersion = new Date().getDate()
     let dataLocal = state.dataArray.find(i => i.id === id)
     if (!dataLocal) {
       dataLocal = lodash.assign({}, state.default, data, additionalParams)
@@ -55,7 +53,6 @@ const utilfuns = {
     } else {
       lodash.assign(dataLocal, data, additionalParams)
     }
-    dataLocal
     return dataLocal
   },
   deleteTable (id) {
@@ -63,6 +60,15 @@ const utilfuns = {
       return i.id === id
     })
     return dataLocal ? dataLocal[0] : null
+  },
+  resetRefreshTableBody (id) {
+    let dataLocal = lodash.remove(state.dataArray, function (i) {
+      return i.id === id
+    })
+    let data = state.dataArray.find(i => i.id === id)
+    if (data) {
+      Vue.set(dataLocal, 'refreshTableBody', false)
+    }
   }
 }
 export {
