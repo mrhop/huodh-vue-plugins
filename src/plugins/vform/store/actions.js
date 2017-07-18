@@ -15,11 +15,11 @@ export default {
           types: {success_type: types.FORM_SUCCESS, failure_type: types.FORM_FAILURE}
         }
       })
-    } else if (formRule) {
-      utilfuns.initForm(id, formRule, {operation: 'initForm'})
     } else if (initAction) {
       var data = initAction({key})
       utilfuns.initForm(id, data, {operation: 'initForm'})
+    } else if (formRule) {
+      utilfuns.initForm(id, formRule, {operation: 'initForm'})
     }
   },
   formReset: function ({commit, state}, {id, resetUrl, resetAction}) {
@@ -55,7 +55,7 @@ export default {
       })
     } else if (ruleChangeAction) {
       var data = ruleChangeAction({parameters})
-      commit(types.FORM_RESET_SUCCESS, {
+      commit(types.FORM_RULE_CHANGE_SUCCESS, {
         id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
       })
     }

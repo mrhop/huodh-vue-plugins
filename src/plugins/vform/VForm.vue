@@ -35,10 +35,17 @@
           <button type="reset" v-if="action.reset" class="btn btn-default"
                   v-on:click.prevent="resetForm">{{action.reset.label}}
           </button>
-          <router-link v-if="action&&action.others" class="btn btn-default" v-for="(item,key) in action.others"
+          <router-link v-if="action&&action.others&&actionUrls&&actionUrls[item.key]" class="btn btn-default"
+                       v-for="(item,key) in action.others"
                        :key="key"
                        :to="{path:actionUrls[item.key],query:{key}}">{{item.label}}
           </router-link>
+          <button v-if="action&&action.others&&actions&&actions[item.key]" class="btn btn-default"
+                  v-for="(item,key) in action.others"
+                  :key="key"
+                  v-on:click.prevent="actions[item.key].call(this,{key})">
+            {{item.label}}
+          </button>
         </div>
       </div>
     </form>
@@ -107,14 +114,12 @@
         })
       },
       ruleChange (parameters) {
-        if (this.actionUrls.ruleChangeUrl) {
-          this.formRuleChange({
-            id: this.id,
-            parameters,
-            ruleChangeUrl: this.actionUrls && this.actionUrls.ruleChangeUrl,
-            ruleChangeAction: this.actions && this.actions.ruleChange
-          })
-        }
+        this.formRuleChange({
+          id: this.id,
+          parameters,
+          ruleChangeUrl: this.actionUrls && this.actionUrls.ruleChangeUrl,
+          ruleChangeAction: this.actions && this.actions.ruleChange
+        })
       },
       saveForm () {
         this.formSave({
