@@ -58,7 +58,7 @@
         addFormActions: this.editable && this.actions && this.actions.add && {
           save: this.actions.add
         },
-        addFormRule: this.editable && this.actionUrls && this.actionUrls.addUrl && {
+        addFormRule: this.editable && (this.actionUrls && this.actionUrls.addUrl || this.actions && this.actions.add) && {
           rules: {
             items: [
               {
@@ -92,7 +92,7 @@
         editFormActions: this.editable && this.actions && this.actions.edit && {
           save: this.actions.edit
         },
-        editFormRule: this.editable && this.actionUrls && this.actionUrls.editUrl && {
+        editFormRule: this.editable && (this.actionUrls && this.actionUrls.editUrl || this.actions && this.actions.edit) && {
           rules: {
             items: [
               {
@@ -162,7 +162,7 @@
       }
     },
     props: {
-      treeData: {},
+      treeData: null,
       editable: {
         default: false
       },
@@ -228,11 +228,6 @@
       treeItem, modalTpl, vform
     },
     created: function () {
-      if (this.treeData && typeof this.treeData === 'string') {
-        this.treeInit({id: this.id, initUrl: this.treeData})
-      } else {
-        this.treeInit({id: this.id, treeData: this.treeData})
-      }
       if (this.treeData) {
         if (typeof this.treeData === 'string') {
           this.treeInit({id: this.id, initUrl: this.treeData})

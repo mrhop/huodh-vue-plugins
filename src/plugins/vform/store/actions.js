@@ -174,7 +174,7 @@ export default {
       } else if (saveAction) {
         var data = saveAction({key, data: validated.data, multipart: validated.multipart})
         commit(types.FORM_SAVE_SUCCESS, {
-          id, data, callParameters: {id, saveUrl, saveAction}
+          id, data, callParameters: {id, saveUrl, saveAction, data: validated.data}
         })
       }
     }

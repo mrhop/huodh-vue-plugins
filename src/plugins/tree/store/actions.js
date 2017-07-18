@@ -34,13 +34,13 @@ export default {
       })
     } else if (deleteAction) {
       var data = deleteAction({id: itemId})
-      if (data) {
+      if (data === false) {
         commit(types.TREE_ITEM_DELETE_SUCCESS, {
-          id, data, callParameters: {id, deleteUrl, deleteAction, itemId}
+          id, error: 'error from outside action', callParameters: {id, deleteUrl, deleteAction, params: {id: itemId}}
         })
       } else {
         commit(types.TREE_ITEM_DELETE_SUCCESS, {
-          id, error: 'error from outside action', callParameters: {id, deleteUrl, deleteAction, itemId}
+          id, data, callParameters: {id, deleteUrl, deleteAction, params: {id: itemId}}
         })
       }
     }

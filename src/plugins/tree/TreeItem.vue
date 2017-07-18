@@ -11,11 +11,13 @@
                                                                          :class="iconClass"/>{{itemData.title}}</a>
       <span v-else><span v-if="iconClass" :class="iconClass"/>{{itemData.title}}</span>
       <transition name="fade">
-        <span v-if="editable" class="editable-span" v-show="showEditable"><a v-if="actionUrls&&actionUrls.addUrl"
-                                                                             class="glyphicon glyphicon-plus"
-                                                                             @click.prevent="addCurrent"/><a
-          v-if="actionUrls&&actionUrls.editUrl" class="glyphicon glyphicon-edit" @click.prevent="editCurrent"/><a
-          v-if="(itemData.deletable||itemData.deletable===undefined)&&actionUrls&&actionUrls.deleteUrl"
+        <span v-if="editable" class="editable-span" v-show="showEditable"><a
+          v-if="actionUrls&&actionUrls.addUrl||actions&&actions.add"
+          class="glyphicon glyphicon-plus"
+          @click.prevent="addCurrent"/><a
+          v-if="actionUrls&&actionUrls.editUrl||actions&&actions.edit" class="glyphicon glyphicon-edit"
+          @click.prevent="editCurrent"/><a
+          v-if="(itemData.deletable||itemData.deletable===undefined)&&(actionUrls&&actionUrls.deleteUrl||actions&&actions.delete)"
           class="glyphicon glyphicon-trash"
           @click.prevent="deleteCurrent"/></span>
       </transition>
@@ -24,7 +26,7 @@
       <treeItem v-for="item in itemData.children" :itemData="item"
                 v-on:click="clickTransfer"
                 :key="item.id" :editable="editable"
-                :actionUrls="actionUrls" v-on:addItem="addItem" v-on:editItem="editItem" v-on:deleteItem="deleteItem"/>
+                :actionUrls="actionUrls":actions="actions" v-on:addItem="addItem" v-on:editItem="editItem" v-on:deleteItem="deleteItem"/>
     </ul>
   </li>
 </template>
@@ -41,7 +43,7 @@
     created: function () {
       this.initTreeItem()
     },
-    props: ['itemData', 'editable', 'actionUrls'],
+    props: ['itemData', 'editable', 'actionUrls', 'actions'],
     methods: {
       initTreeItem () {
         if (this.itemData) {
