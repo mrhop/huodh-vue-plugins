@@ -91,14 +91,14 @@ export default {
       })
     } else if (deleteAction) {
       var data = deleteAction({key})
-      if (data) {
+      if (data === false) {
+        commit(types.TABLE_DELETE_FAILURE, {id, error: 'error from outside action'})
+      } else {
         commit(types.TABLE_DELETE_SUCCESS, {
           id,
           data: data,
           callParameters: {id, key, deleteUrl, deleteAction}
         })
-      } else {
-        commit(types.TABLE_DELETE_FAILURE, {id, error: 'error from outside action'})
       }
     }
   },
