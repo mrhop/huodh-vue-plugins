@@ -22,7 +22,7 @@
     <input
       v-else-if="options.type==='password'"
       type="password" class="form-control" :name="options.name"
-      v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
+      v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
     <input
       v-else-if="options.type==='number'"
       type="number" class="form-control" :name="options.name"

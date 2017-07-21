@@ -27,7 +27,7 @@
         </div>
       </div>
       <!-- 此处是底部的actions -->
-      <div class="form-group" v-if="action&&action.save">
+      <div class="form-group actions" v-if="action&&action.save">
         <div class="col-sm-offset-2 col-sm-10">
           <button type="submit" v-if="action.save" class="btn btn-primary"
                   v-on:click.prevent="saveForm">{{action.save.label}}
@@ -35,14 +35,15 @@
           <button type="reset" v-if="action.reset" class="btn btn-default"
                   v-on:click.prevent="resetForm">{{action.reset.label}}
           </button>
-          <router-link v-if="action&&action.others&&actionUrls&&actionUrls[item.key]" class="btn btn-default"
-                       v-for="(item,key) in action.others"
-                       :key="key"
+          <router-link v-if="action&&action.others&&actionUrls&&actionUrls[item.key]" :class="['others',item.key]"
+                       v-for="(item,keyTemp) in action.others"
+                       :key="keyTemp"
                        :to="{path:actionUrls[item.key],query:{key}}">{{item.label}}
           </router-link>
-          <button v-if="action&&action.others&&actions&&actions[item.key]" class="btn btn-default"
-                  v-for="(item,key) in action.others"
-                  :key="key"
+          <button v-if="action&&action.others&&actions&&actions[item.key]"
+                  :class="['btn','btn-default','others',item.key]"
+                  v-for="(item,keyTemp) in action.others"
+                  :key="keyTemp"
                   v-on:click.prevent="actions[item.key].call(this,{key})">
             {{item.label}}
           </button>
@@ -76,7 +77,7 @@
         return this.$store.getters.formAction(this.id)
       },
       key () {
-        return this.$route && this.$route.query ? this.$route.query.key : ''
+        return this.$route && this.$route.query && this.$route.query.key
       },
       error () {
         return this.$store.getters.formError(this.id)
