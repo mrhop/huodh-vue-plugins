@@ -5,7 +5,7 @@
         <router-link class="btn btn-primary" :to="actionUrls.backupUrl">{{action.backup.label}}</router-link>
       </div>
     </div>
-    <form class="form-horizontal">
+    <form class="form-horizontal" :id="'vform-'+id" method="post" :action="actionUrls&&actionUrls.directSaveUrl">
       <div v-for="(item,key) in items" :key="key">
         <div class="form-group" v-if="!Array.isArray(item)&&!item.hidden" v-show="item.type!='hidden'">
           <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
@@ -123,12 +123,26 @@
         })
       },
       saveForm () {
-        this.formSave({
-          id: this.id,
-          key: this.key,
-          saveUrl: this.actionUrls && this.actionUrls.saveUrl,
-          saveAction: this.actions && this.actions.save
-        })
+        if (this.actionUrls && this.actionUrls.saveUrl || this.actions && this.actions.save) {
+          this.formSave({
+            id: this.id,
+            key: this.key,
+            saveUrl: this.actionUrls && this.actionUrls.saveUrl,
+            saveAction: this.actions && this.actions.save
+          })
+        } else {
+          var flag = this.formValidate({
+            id: this.id,
+            key: this.key
+          })
+          if (flag) {
+            flag.then(function (value) {
+              if (value === true) {
+                document.getElementById('vform-' + this.id).submit()
+              }
+            }.bind(this))
+          }
+        }
       },
       backup () {
         if (this.actionUrls.backupUrl) {
@@ -141,6 +155,7 @@
       'formReset',
       'formRuleChange',
       'formSave',
+      'formValidate',
       'clearForm',
       'removeFormError',
       'removeFormSuccess'

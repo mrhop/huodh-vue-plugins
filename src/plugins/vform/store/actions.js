@@ -67,94 +67,7 @@ export default {
     // 首先validate items
     // 同时给data赋值
     // 然后进行multi的确认，在plugin部分进行multi的处理
-    let validateFormClient = function (items) {
-      let returnFlag = true
-      let multipart = false
-      let data = {}
-
-      let validateInternal = function (itemData, validateRules, type, item) {
-        var tmpData = null
-        if (itemData != null && itemData !== undefined) {
-          if (typeof itemData === 'number') {
-            itemData = itemData + ''
-          }
-          if (typeof itemData === 'string') {
-            tmpData = itemData.replace(/(^\s*)|(\s*$)/g, '')
-          } else if (itemData instanceof Array && itemData.length > 0) {
-            tmpData = JSON.stringify(itemData)
-          } else if (itemData instanceof Object) {
-            tmpData = itemData
-          }
-        }
-        if (!tmpData) {
-          tmpData = ''
-        }
-        if (type !== 'file') {
-          for (var index in validateRules) {
-            let validateRule = validateRules[index]
-            let regExp = new RegExp(validateRule.regex)
-            if (!regExp.test(tmpData)) {
-              return validateRule.errorMsg
-            }
-          }
-          return null
-        } else {
-          var errorFileMsg = {}
-          if (validateRules) {
-            for (var index1 in validateRules) {
-              let validateRule = validateRules[index1]
-              let regExp = new RegExp(validateRule.regex)
-              for (var key in tmpData) {
-                if (tmpData[key] && !errorFileMsg[key] && !regExp.test(tmpData[key][0].name)) {
-                  errorFileMsg[key] = validateRule.errorMsg
-                }
-              }
-            }
-          }
-          if (item.required && lodash.isEmpty(itemData)) {
-            errorFileMsg[item.name] = '不能为空'
-            return errorFileMsg
-          }
-          if (item.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(itemData)) {
-            for (var fileIndex in itemData) {
-              if (itemData[fileIndex] && itemData[fileIndex][0] instanceof File) {
-                if (itemData[fileIndex][0].size > item.maxSize) {
-                  errorFileMsg[fileIndex] = '超过大小上限:' + item.maxSize + '字节'
-                }
-              }
-            }
-          }
-          return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
-        }
-      }
-      let validateSub = function (item) {
-        if (item.type === 'file') {
-          multipart = true
-        }
-        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
-          let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
-          if (validatedMsg) {
-            item.validatedMsg = validatedMsg
-            returnFlag = false
-          } else {
-            data[item.name] = item.defaultValue
-          }
-        } else {
-          data[item.name] = item.defaultValue
-        }
-      }
-      items.forEach(function (item) {
-        if (Array.isArray(item)) {
-          item.forEach(function (subitem) {
-            validateSub(subitem)
-          })
-        } else {
-          validateSub(item)
-        }
-      })
-      return {items, data, returnFlag, multipart}
-    }
-    var validated = validateFormClient(items)
+    var validated = utilfuns.validateFormClient(items)
     if (!validated.returnFlag) {
       // 校验失败
       commit(types.FORM_SAVE_FAILURE, {id, items})
@@ -177,6 +90,16 @@ export default {
           id, data, callParameters: {id, saveUrl, saveAction, data: validated.data}
         })
       }
+    }
+  },
+  formValidate: function ({commit, state}, {id, key, saveUrl, saveAction}) {
+    let items = lodash.cloneDeep(utilfuns.getForm(id).rules.items)
+    var validated = utilfuns.validateFormClient(items)
+    if (!validated.returnFlag) {
+      // 校验失败
+      commit(types.FORM_SAVE_FAILURE, {id, items})
+    } else {
+      return true
     }
   },
   clearForm: function ({commit}, {id}) {
