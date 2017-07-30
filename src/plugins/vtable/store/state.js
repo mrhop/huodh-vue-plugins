@@ -3,6 +3,7 @@
  */
 import lodash from 'lodash'
 import Vue from 'vue'
+
 const state = {
   dataArray: [],
   default: {
