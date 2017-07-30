@@ -131,7 +131,6 @@
       isArray () {
         if (this.treeDataLocal) {
           if (lodash.isArray(this.treeDataLocal)) {
-            this.isArray = true
             return true
           }
         }

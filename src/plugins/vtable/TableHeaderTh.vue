@@ -8,14 +8,20 @@
 <script>
   import lodash from 'lodash'
   import {mapActions} from 'vuex'
+
   export default {
     name: 'v-table-header',
     props: ['item', 'sorts'],
     methods: lodash.assignIn({
+      // 考虑单个的sort，而不考虑多个的排序
       sortChange () {
         if (this.sorts[this.item.name]) {
           this.sorts[this.item.name] = this.sorts[this.item.name] === 'asc' ? 'desc' : 'asc'
         } else {
+          var props = Object.getOwnPropertyNames(this.sorts)
+          for (var i = 0; i < props.length; i++) {
+            delete this.sorts[props[i]]
+          }
           this.sorts[this.item.name] = this.sorts[this.item.name] = 'asc'
         }
         this.$emit('sortIt')
