@@ -149,11 +149,11 @@
     watch: {
       error: function () {
         if (this.error) {
-          if (this.error.header) {
-            this.errorDefault.header = this.error.header
+          if (this.error.title) {
+            this.errorDefault.header = this.error.title
           }
-          if (this.error.content) {
-            this.errorDefault.content = this.error.content
+          if (this.error.message) {
+            this.errorDefault.content = this.error.message
           }
           this.deleteErrorTrigger = !this.deleteErrorTrigger
         }

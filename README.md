@@ -12,7 +12,7 @@ creat some vue plugins
  遗留问题：
  1.tree 的状态保持，当重新刷新时，使用js  set cookie或者localstore是一个思路
  2.table的后续操作 【title的排序】
- 4.form element 遗留，date element,file element 的v-on:change 的处理，不适用v-modal,同时 select 要给出一个X按钮用于清空selected
+ 4.form element 完成，包括file，date等
  5.tab 目前无法包裹vuex-state的数据，这个需要另行设计时考虑
 
 
@@ -48,3 +48,11 @@ git push -u origin master
  npm unpublish
  node i --no-optional
 
+  tree item
+
+	tree item的当前点击状态处理(当前选中状态处理)，tree的parent的替换以及点击状态的处理
+	form 重置时 files的不能为空问题处理
+	排序时未能显示排序的标识
+
+	开始对后端进行处理
+  然后是后端对应前端的改造，去除client（首先是user，然后是cms，然后是商城，然后是crm，然后考虑其他）
