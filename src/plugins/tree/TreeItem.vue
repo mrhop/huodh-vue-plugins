@@ -4,12 +4,12 @@
       <a v-if="itemData.children&&itemData.children.length" v-on:click="clickToggle"><span v-if="!editable&&iconClass"
                                                                                            :class="iconClass"/><span
         v-if="editable&&!showChildren" class="glyphicon glyphicon-folder-close"/><span
-        v-if="editable&&showChildren" class="glyphicon glyphicon-folder-open"/><span>{{itemData.title}}</span></a>
-      <router-link v-else-if="itemData.url" :to="itemData.url"><span v-if="iconClass" :class="iconClass"/>{{itemData.title}}
+        v-if="editable&&showChildren" class="glyphicon glyphicon-folder-open"/><span class="item-text">{{itemData.title}}</span></a>
+      <router-link v-else-if="itemData.url" :to="itemData.url"><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span>
       </router-link>
       <a v-else-if="itemData.emitClick" @click.prevent="treeClick"><span v-if="iconClass"
-                                                                         :class="iconClass"/>{{itemData.title}}</a>
-      <span v-else><span v-if="iconClass" :class="iconClass"/>{{itemData.title}}</span>
+                                                                         :class="iconClass"/><span class="item-text">{{itemData.title}}</span></a>
+      <span v-else><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span></span>
       <transition name="fade">
         <span v-if="editable" class="editable-span" v-show="showEditable"><a
           v-if="actionUrls&&actionUrls.addUrl||actions&&actions.add"
