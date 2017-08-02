@@ -5,11 +5,11 @@
                                                                                            :class="iconClass"/><span
         v-if="editable&&!showChildren" class="glyphicon glyphicon-folder-close"/><span
         v-if="editable&&showChildren" class="glyphicon glyphicon-folder-open"/><span class="item-text">{{itemData.title}}</span></a>
-      <router-link v-else-if="itemData.url" :to="itemData.url"><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span>
+      <router-link v-else-if="itemData.url" @click.native="treeClick" :to="itemData.url"><span v-if="iconClass"
+                                                                                               :class="iconClass"/><span
+        class="item-text">{{itemData.title}}</span>
       </router-link>
-      <a v-else-if="itemData.emitClick" @click.prevent="treeClick"><span v-if="iconClass"
-                                                                         :class="iconClass"/><span class="item-text">{{itemData.title}}</span></a>
-      <span v-else><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span></span>
+      <span v-else @click="treeClick"><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span></span>
       <transition name="fade">
         <span v-if="editable" class="editable-span" v-show="showEditable"><a
           v-if="actionUrls&&actionUrls.addUrl||actions&&actions.add"
@@ -26,7 +26,8 @@
       <treeItem v-for="item in itemData.children" :itemData="item"
                 v-on:click="clickTransfer"
                 :key="item.id" :editable="editable"
-                :actionUrls="actionUrls":actions="actions" v-on:addItem="addItem" v-on:editItem="editItem" v-on:deleteItem="deleteItem"/>
+                :actionUrls="actionUrls" :actions="actions" v-on:addItem="addItem" v-on:editItem="editItem"
+                v-on:deleteItem="deleteItem"/>
     </ul>
   </li>
 </template>
@@ -52,6 +53,7 @@
       },
       clickToggle (event) {
         this.showChildren = !this.showChildren
+        this.treeClick()
       },
       treeClick () {
         this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
