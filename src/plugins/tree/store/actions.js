@@ -38,7 +38,7 @@ export default {
         commit(types.TREE_ITEM_DELETE_SUCCESS, {
           id, error: 'error from outside action', callParameters: {id, deleteUrl, deleteAction, params: {id: itemId}}
         })
-      } else {
+      } else if (data) {
         commit(types.TREE_ITEM_DELETE_SUCCESS, {
           id, data, callParameters: {id, deleteUrl, deleteAction, params: {id: itemId}}
         })

@@ -17,7 +17,9 @@ export default {
       })
     } else if (initAction) {
       var data = initAction({key})
-      utilfuns.initForm(id, data, {operation: 'initForm'})
+      if (data) {
+        utilfuns.initForm(id, data, {operation: 'initForm'})
+      }
     } else if (formRule) {
       utilfuns.initForm(id, formRule, {operation: 'initForm'})
     }
@@ -37,9 +39,11 @@ export default {
       })
     } else if (resetAction) {
       var data = resetAction({key: id})
-      commit(types.FORM_RESET_SUCCESS, {
-        id, data, callParameters: {id, resetUrl, resetAction}
-      })
+      if (data) {
+        commit(types.FORM_RESET_SUCCESS, {
+          id, data, callParameters: {id, resetUrl, resetAction}
+        })
+      }
     }
   },
   formRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl, ruleChangeAction}) {
@@ -55,9 +59,11 @@ export default {
       })
     } else if (ruleChangeAction) {
       var data = ruleChangeAction({parameters})
-      commit(types.FORM_RULE_CHANGE_SUCCESS, {
-        id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
-      })
+      if (data) {
+        commit(types.FORM_RULE_CHANGE_SUCCESS, {
+          id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
+        })
+      }
     }
   },
   formSave: function ({commit, state}, {id, key, saveUrl, saveAction}) {
@@ -86,9 +92,11 @@ export default {
         })
       } else if (saveAction) {
         var data = saveAction({key, data: validated.data, multipart: validated.multipart})
-        commit(types.FORM_SAVE_SUCCESS, {
-          id, data, callParameters: {id, saveUrl, saveAction, data: validated.data}
-        })
+        if (data) {
+          commit(types.FORM_SAVE_SUCCESS, {
+            id, data, callParameters: {id, saveUrl, saveAction, data: validated.data}
+          })
+        }
       }
     }
   },

@@ -19,7 +19,7 @@ export default {
       var data = listAction({pager: state.default.data.pager, init: true})
       if (data) {
         commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {pager: state.default.data.pager, init: true}})
-      } else {
+      } else if (data === false) {
         commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
       }
     }
@@ -46,7 +46,7 @@ export default {
         })
         if (data) {
           commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {}})
-        } else {
+        } else if (data === false) {
           commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
         }
       }
@@ -71,7 +71,7 @@ export default {
       var data = listAction({pager, filters, sorts})
       if (data) {
         commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {}})
-      } else {
+      } else if (data === false) {
         commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
       }
     }

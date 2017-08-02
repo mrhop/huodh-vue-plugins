@@ -105,15 +105,14 @@
     methods: {
       dealWithData () {
         delete this.options.validatedMsg
-        if (this.elementValue) {
+        if (this.elementValue !== undefined && this.elementValue !== null) {
           this.options.defaultValue = this.elementValue
           if (this.dataFromParent) {
             this.dataFromParent[this.options.name] = this.elementValue
           }
         } else {
-          this.options.defaultValue = ''
           if (this.dataFromParent) {
-            this.dataFromParent[this.options.name] = ''
+            delete this.dataFromParent[this.options.name]
           }
         }
         if (this.callback && typeof this.callback === 'function') {
