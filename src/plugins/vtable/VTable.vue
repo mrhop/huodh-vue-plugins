@@ -106,7 +106,7 @@
     methods: lodash.assignIn({
       pageSizeChange (event) {
         let pager = {
-          currentPage: this.currentPage,
+          currentPage: 1,
           pageSize: parseInt(event.target.value)
         }
         let filters = this.filters

@@ -273,6 +273,7 @@
         this.tmpEndDate = now.getDate()
       },
       initDate () {
+        this.valueFormat = this.range ? ['', ''] : ''
         let minArr = this.min.split('-')
         this.minYear = Number(minArr[0])
         this.minMonth = Number(minArr[1])
