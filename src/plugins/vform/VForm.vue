@@ -117,7 +117,7 @@
       ruleChange (parameters) {
         this.formRuleChange({
           id: this.id,
-          parameters,
+          parameters: {changed: parameters, items: this.items},
           ruleChangeUrl: this.actionUrls && this.actionUrls.ruleChangeUrl,
           ruleChangeAction: this.actions && this.actions.ruleChange
         })

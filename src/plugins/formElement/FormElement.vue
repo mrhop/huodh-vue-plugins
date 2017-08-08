@@ -88,17 +88,18 @@
   </div>
 </template>
 <script>
-  import lodash from 'lodash'
+  import {utilfuns} from '../vform/store/state'
   import datePicker from '../datePicker/DatePicker.vue'
   import treeForForm from '../tree/TreeForForm.vue'
   export default {
     name: 'form-element',
     data () {
       return {
-        elementValue: this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : '')),
+        elementValue: (this.options.defaultValue !== undefined && this.elementValue !== null) ? this.options.defaultValue : ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : '')),
         showSelectCancel: false,
         showTree: false,
-        treeValue: this.options.defaultLabel || ''
+        treeValue: this.options.defaultLabel || '',
+        fromOuter: false
       }
     },
     props: ['dataFromParent', 'options', 'callback'],
@@ -121,41 +122,7 @@
         if (this.options.ruleChange) {
           this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
         }
-        if (this.options.type !== 'file' && this.options.type !== 'image') {
-          for (var index in this.options.validate) {
-            let validateRule = this.options.validate[index]
-            let regExp = new RegExp(validateRule.regex)
-            if (!regExp.test(this.options.defaultValue)) {
-              this.options.validatedMsg = validateRule.errorMsg
-              break
-            }
-          }
-        } else {
-          var errorFileMsg = {}
-          if (this.options.validate) {
-            for (var index1 in this.options.validate) {
-              let validateRule = this.options.validate[index1]
-              let regExp = new RegExp(validateRule.regex)
-              for (var key in this.options.defaultValue) {
-                if (this.options.defaultValue[key] && !errorFileMsg[key] && !regExp.test(this.options.defaultValue[key][0].name)) {
-                  errorFileMsg[key] = validateRule.errorMsg
-                }
-              }
-            }
-          }
-          if (this.options.required && lodash.isEmpty(this.options.defaultValue)) {
-            errorFileMsg[this.options.name] = '不能为空'
-          } else if (this.options.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(this.options.defaultValue)) {
-            for (var fileIndex in this.options.defaultValue) {
-              if (this.options.defaultValue[fileIndex] && this.options.defaultValue[fileIndex][0] instanceof File) {
-                if (this.options.defaultValue[fileIndex][0].size > this.options.maxSize) {
-                  errorFileMsg[fileIndex] = '超过大小上限:' + this.options.maxSize + '字节'
-                }
-              }
-            }
-          }
-          this.options.validatedMsg = lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
-        }
+        utilfuns.validateSub(this.options)
       },
       dealWithDate (value) {
         var parts
@@ -214,23 +181,22 @@
     },
     watch: {
       elementValue: function () {
-        this.dealWithData()
+        if (!this.fromOuter) {
+          this.dealWithData()
+        } else {
+          this.fromOuter = false
+        }
       },
-//      options: function () {
-//        if (!this.options.validatedMsg) {
-//          this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
-//          this.treeValue = this.options.defaultLabel || ''
-//        }
-//      },
       options: {
         handler: function (val, oldVal) {
-          if (!val.validatedMsg) {
-            this.elementValue = this.options.defaultValue || ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file') ? {} : ''))
-            this.treeValue = this.options.defaultLabel || ''
-          }
+//          if (!val.validatedMsg) {
+//            this.elementValue = (this.options.defaultValue !== undefined && this.elementValue !== null) ? this.options.defaultValue : ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : ''))
+//            this.treeValue = this.options.defaultLabel || ''
+//          }
           if (val.defaultValue !== oldVal.defaultValue) {
-            this.elementValue = val.defaultValue
+            this.elementValue = (val.defaultValue !== undefined && val.defaultValue !== null) ? val.defaultValue : ((val.type === 'checkbox') ? [] : ((val.type === 'file' || val.type === 'image') ? {} : ''))
           }
+          this.fromOuter = true
         },
         deep: true
       }
