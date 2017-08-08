@@ -185,18 +185,17 @@
           this.dealWithData()
         } else {
           this.fromOuter = false
+          if (this.options.type === 'file' || this.options.type === 'image') {
+            document.querySelector('')!!
+          }
         }
       },
       options: {
         handler: function (val, oldVal) {
-//          if (!val.validatedMsg) {
-//            this.elementValue = (this.options.defaultValue !== undefined && this.elementValue !== null) ? this.options.defaultValue : ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : ''))
-//            this.treeValue = this.options.defaultLabel || ''
-//          }
-          if (val.defaultValue !== oldVal.defaultValue) {
+          this.fromOuter = true
+          if (val.defaultValue !== this.elementValue) {
             this.elementValue = (val.defaultValue !== undefined && val.defaultValue !== null) ? val.defaultValue : ((val.type === 'checkbox') ? [] : ((val.type === 'file' || val.type === 'image') ? {} : ''))
           }
-          this.fromOuter = true
         },
         deep: true
       }

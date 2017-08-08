@@ -33,6 +33,61 @@ const types = {
   REMOVE_FORM_ERROR: 'REMOVE_FORM_ERROR',
   REMOVE_FORM_SUCCESS: 'REMOVE_FORM_SUCCESS'
 }
+const validateInternal = function (itemData, validateRules, type, item) {
+  var tmpData = null
+  if (itemData != null && itemData !== undefined) {
+    if (typeof itemData === 'number' || typeof itemData === 'boolean') {
+      itemData = itemData + ''
+    }
+    if (typeof itemData === 'string') {
+      tmpData = itemData.replace(/(^\s*)|(\s*$)/g, '')
+    } else if (itemData instanceof Array && itemData.length > 0) {
+      tmpData = JSON.stringify(itemData)
+    } else if (itemData instanceof Object) {
+      tmpData = itemData
+    }
+  }
+  if (!tmpData) {
+    tmpData = ''
+  }
+  if (type !== 'file') {
+    for (var index in validateRules) {
+      let validateRule = validateRules[index]
+      let regExp = new RegExp(validateRule.regex)
+      if (!regExp.test(tmpData)) {
+        return validateRule.errorMsg
+      }
+    }
+    return null
+  } else {
+    var errorFileMsg = {}
+    if (validateRules) {
+      for (var index1 in validateRules) {
+        let validateRule = validateRules[index1]
+        let regExp = new RegExp(validateRule.regex)
+        for (var key in tmpData) {
+          if (tmpData[key] && !errorFileMsg[key] && !regExp.test(tmpData[key][0].name)) {
+            errorFileMsg[key] = validateRule.errorMsg
+          }
+        }
+      }
+    }
+    if (item.required && lodash.isEmpty(itemData)) {
+      errorFileMsg[item.name] = '不能为空'
+      return errorFileMsg
+    }
+    if (item.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(itemData)) {
+      for (var fileIndex in itemData) {
+        if (itemData[fileIndex] && itemData[fileIndex][0] instanceof File) {
+          if (itemData[fileIndex][0].size > item.maxSize) {
+            errorFileMsg[fileIndex] = '超过大小上限:' + item.maxSize + '字节'
+          }
+        }
+      }
+    }
+    return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
+  }
+}
 const utilfuns = {
   getForm (id) {
     let data = state.dataArray.find(i => i.id === id)
@@ -110,7 +165,7 @@ const utilfuns = {
         multipart = true
       }
       if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
-        let validatedMsg = this.validateInternal(item.defaultValue, item.validate, item.type, item)
+        let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
         if (validatedMsg) {
           item.validatedMsg = validatedMsg
           returnFlag = false
@@ -134,68 +189,12 @@ const utilfuns = {
   },
   validateSub: function (item) {
     if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
-      let validatedMsg = this.validateInternal(item.defaultValue, item.validate, item.type, item)
+      let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
       if (validatedMsg) {
         item.validatedMsg = validatedMsg
       }
     }
-  },
-  validateInternal: function (itemData, validateRules, type, item) {
-    var tmpData = null
-    if (itemData != null && itemData !== undefined) {
-      if (typeof itemData === 'number' || typeof itemData === 'boolean') {
-        itemData = itemData + ''
-      }
-      if (typeof itemData === 'string') {
-        tmpData = itemData.replace(/(^\s*)|(\s*$)/g, '')
-      } else if (itemData instanceof Array && itemData.length > 0) {
-        tmpData = JSON.stringify(itemData)
-      } else if (itemData instanceof Object) {
-        tmpData = itemData
-      }
-    }
-    if (!tmpData) {
-      tmpData = ''
-    }
-    if (type !== 'file') {
-      for (var index in validateRules) {
-        let validateRule = validateRules[index]
-        let regExp = new RegExp(validateRule.regex)
-        if (!regExp.test(tmpData)) {
-          return validateRule.errorMsg
-        }
-      }
-      return null
-    } else {
-      var errorFileMsg = {}
-      if (validateRules) {
-        for (var index1 in validateRules) {
-          let validateRule = validateRules[index1]
-          let regExp = new RegExp(validateRule.regex)
-          for (var key in tmpData) {
-            if (tmpData[key] && !errorFileMsg[key] && !regExp.test(tmpData[key][0].name)) {
-              errorFileMsg[key] = validateRule.errorMsg
-            }
-          }
-        }
-      }
-      if (item.required && lodash.isEmpty(itemData)) {
-        errorFileMsg[item.name] = '不能为空'
-        return errorFileMsg
-      }
-      if (item.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(itemData)) {
-        for (var fileIndex in itemData) {
-          if (itemData[fileIndex] && itemData[fileIndex][0] instanceof File) {
-            if (itemData[fileIndex][0].size > item.maxSize) {
-              errorFileMsg[fileIndex] = '超过大小上限:' + item.maxSize + '字节'
-            }
-          }
-        }
-      }
-      return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
-    }
   }
-
 }
 export {
   state as default,
