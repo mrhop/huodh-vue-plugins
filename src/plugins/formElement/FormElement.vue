@@ -3,11 +3,11 @@
     <input
       v-if="options.type==='hidden'"
       type="hidden" class="form-control" :name="options.name"
-      v-model="elementValue" ref="formElementEl"/>
+      v-model="options.defaultValue" ref="formElementEl"/>
     <input
       v-if="options.type==='text'"
       type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
-      v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
+      v-model="options.defaultValue" ref="formElementEl" :readonly="options.locked"/>
     <input
       v-if="options.type==='button'"
       type="button" class="form-control" :name="options.name"
@@ -22,15 +22,15 @@
     <input
       v-else-if="options.type==='password'"
       type="password" class="form-control" :name="options.name"
-      v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
+      v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
     <input
       v-else-if="options.type==='number'"
       type="number" class="form-control" :name="options.name"
-      v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
+      v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
     <div class="select-block" v-else-if="options.type==='select'" @mouseenter="showSelectCancel = true"
          @mouseleave="showSelectCancel = false">
       <select class="form-control" :name="options.name"
-              v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder">
+              v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder">
         <option v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey" :value="selectItem.value">
           {{selectItem.label}}
         </option>
@@ -41,34 +41,38 @@
     </div>
     <label v-else-if="options.type==='radio' && !options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="radio" :name="options.name" :value="selectItem.value" v-model="elementValue" ref="formElementEl">
+      <input type="radio" :name="options.name" :value="selectItem.value" v-model="options.defaultValue"
+             ref="formElementEl">
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='radio' && options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="radio" :name="options.name" :value="selectItem.value" :checked="elementValue === selectItem.value"
+      <input type="radio" :name="options.name" :value="selectItem.value"
+             :checked="options.defaultValue === selectItem.value"
              ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='checkbox' && !options.locked" class="checkbox-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="checkbox" :name="options.name" :value="selectItem.value" v-model="elementValue" ref="formElementEl">
+      <input type="checkbox" :name="options.name" :value="selectItem.value" v-model="options.defaultValue"
+             ref="formElementEl">
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='checkbox' && options.locked" class="checkbox-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="checkbox" :name="options.name" :checked="elementValue.includes(selectItem.value)"
+      <input type="checkbox" :name="options.name" :checked="options.defaultValue.includes(selectItem.value)"
              :value="selectItem.value" ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
     <textarea v-else-if="options.type==='textarea'" class="form-control" :name="options.name"
-              :rows="options.rows?options.rows:3" v-model="elementValue" ref="formElementEl"
+              :rows="options.rows?options.rows:3" v-model="options.defaultValue" ref="formElementEl"
               :placeholder="options.placeholder" :readonly="options.locked"/>
-    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
+    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="options.defaultValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
-    <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked" :value="elementValue"
+    <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked"
+                :value="options.defaultValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
     <div class="tree-block" v-else-if="options.type==='tree'" @mouseenter="showSelectCancel = true"
          @mouseleave="showSelectCancel = false">
@@ -95,7 +99,6 @@
     name: 'form-element',
     data () {
       return {
-        elementValue: (this.options.defaultValue !== undefined && this.elementValue !== null) ? this.options.defaultValue : ((this.options.type === 'checkbox') ? [] : ((this.options.type === 'file' || this.options.type === 'image') ? {} : '')),
         showSelectCancel: false,
         showTree: false,
         treeValue: this.options.defaultLabel || '',
@@ -106,15 +109,8 @@
     methods: {
       dealWithData () {
         delete this.options.validatedMsg
-        if (this.elementValue !== undefined && this.elementValue !== null) {
-          this.options.defaultValue = this.elementValue
-          if (this.dataFromParent) {
-            this.dataFromParent[this.options.name] = this.elementValue
-          }
-        } else {
-          if (this.dataFromParent) {
-            delete this.dataFromParent[this.options.name]
-          }
+        if (this.dataFromParent) {
+          this.dataFromParent[this.options.name] = this.options.defaultValue
         }
         if (this.callback && typeof this.callback === 'function') {
           this.callback(this.$refs.formElementEl)
@@ -128,18 +124,18 @@
         var parts
         if (this.options.type === 'date') {
           parts = value.split('-')
-          this.elementValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
+          this.options.defaultValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
         } else if (this.options.type === 'daterange') {
           var tempArr = []
           for (var index in value) {
             parts = value[index].split('-')
             tempArr.push(new Date(parts[0], parts[1] - 1, parts[2]).getTime())
           }
-          this.elementValue = tempArr
+          this.options.defaultValue = tempArr
         }
       },
       clearSelect () {
-        this.elementValue = ''
+        this.options.defaultValue = ''
         this.treeValue = ''
       },
       buttonClick () {
@@ -150,9 +146,9 @@
       fileChange (event) {
         // do sth
         if (event.target.files.length > 0) {
-          this.elementValue[event.target.getAttribute('data-index')] = event.target.files
+          this.options.defaultValue[event.target.getAttribute('data-index')] = event.target.files
         } else {
-          delete this.elementValue[event.target.getAttribute('data-index')]
+          delete this.options.defaultValue[event.target.getAttribute('data-index')]
         }
         this.dealWithData()
         this.$forceUpdate()
@@ -166,10 +162,10 @@
         const {value, label} = data || {}
         if (value) {
           this.treeValue = label
-          this.elementValue = value
+          this.options.defaultValue = value
         } else {
           this.treeValue = ''
-          this.elementValue = ''
+          this.options.defaultValue = ''
         }
         this.showTree = false
       },
@@ -180,24 +176,18 @@
       }
     },
     watch: {
-      elementValue: function () {
-        if (!this.fromOuter) {
-          this.dealWithData()
-        } else {
-          this.fromOuter = false
-          if (this.options.type === 'file' || this.options.type === 'image') {
-            Array.from(document.querySelectorAll('#' + this.formId + ' ' + 'input[name=\'' + this.options.name + '\']')).forEach(function (val) {
-              val.value = ''
-              val.files = null
-            })
-          }
-        }
-      },
       options: {
         handler: function (val, oldVal) {
-          this.fromOuter = true
-          if (val.defaultValue !== this.elementValue) {
-            this.elementValue = (val.defaultValue !== undefined && val.defaultValue !== null) ? val.defaultValue : ((val.type === 'checkbox') ? [] : ((val.type === 'file' || val.type === 'image') ? {} : ''))
+          if (!val.initForm) {
+            this.dealWithData()
+          } else {
+            if (val.type === 'file' || val.type === 'image') {
+              Array.from(document.querySelectorAll('#' + this.formId + ' ' + 'input[name=\'' + this.options.name + '\']')).forEach(function (val) {
+                val.value = ''
+                val.files = null
+              })
+            }
+            delete val.initForm
           }
         },
         deep: true

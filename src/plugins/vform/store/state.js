@@ -104,7 +104,14 @@ const utilfuns = {
       lodash.remove(state.dataArray, function (i) {
         return i.id === id
       })
-      state.dataArray.push(lodash.cloneDeep(data))
+      let dataLocal = lodash.cloneDeep(data)
+      let items = dataLocal.rules.items
+      for (var key in items) {
+        if (!items[key].hidden) {
+          items[key].initForm = true
+        }
+      }
+      state.dataArray.push(dataLocal)
     }
   },
   initForm (id, data, additionalParams) {
@@ -115,6 +122,39 @@ const utilfuns = {
       return item.id === id
     })
     let dataLocal = lodash.assign({}, state.default, data, additionalParams)
+    let items = dataLocal.rules.items
+    for (var key in items) {
+      if (items[key].hidden === undefined || items[key].hidden === null) {
+        items[key].hidden = false
+      }
+      if (items[key].locked === undefined || items[key].locked === null) {
+        items[key].locked = false
+      }
+      if (!items[key].hidden) {
+        items[key].initForm = true
+      }
+      if (items[key].type === 'file' || items[key].type === 'image') {
+        items[key].defaultValue = {}
+      } else {
+        if (items[key].type === 'checkbox') {
+          if (!items[key].items) {
+            items[key].items = []
+          }
+          if (!items[key].defaultValue) {
+            items[key].defaultValue = []
+          }
+        } else if (items[key].type === 'select' || items[key].type === 'radio') {
+          if (!items[key].items) {
+            items[key].items = []
+          }
+          if (!items[key].defaultValue) {
+            items[key].defaultValue = undefined
+          }
+        } else if (items[key].defaultValue === undefined) {
+          items[key].defaultValue = null
+        }
+      }
+    }
     dataLocal.id = id
     state.dataArray.push(lodash.cloneDeep(dataLocal))
     state.dataArrayInit.push(lodash.cloneDeep(dataLocal))
@@ -170,10 +210,10 @@ const utilfuns = {
           item.validatedMsg = validatedMsg
           returnFlag = false
         } else {
-          data[item.name] = item.defaultValue
+          data[item.name] = item.defaultValue === '' ? null : item.defaultValue
         }
       } else {
-        data[item.name] = item.defaultValue
+        data[item.name] = item.defaultValue === '' ? null : item.defaultValue
       }
     }
     items.forEach(function (item) {

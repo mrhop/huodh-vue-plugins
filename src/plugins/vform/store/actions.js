@@ -58,7 +58,7 @@ export default {
         }
       })
     } else if (ruleChangeAction) {
-      var data = ruleChangeAction({parameters})
+      var data = ruleChangeAction(parameters)
       if (data) {
         commit(types.FORM_RULE_CHANGE_SUCCESS, {
           id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
