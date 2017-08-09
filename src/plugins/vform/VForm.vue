@@ -10,8 +10,9 @@
         <div class="form-group" v-if="!Array.isArray(item)&&!item.hidden" v-show="item.type!='hidden'">
           <label :for="item.name" class="col-sm-2 control-label">{{item.label}}</label>
           <div class="col-sm-10">
-            <formElement v-if="!item.hidden&&item.ruleChange" :options="item" v-on:ruleChange="ruleChange"/>
-            <formElement v-else-if="!item.hidden" :options="item"/>
+            <formElement :formId="'vform-'+id" v-if="!item.hidden&&item.ruleChange" :options="item"
+                         v-on:ruleChange="ruleChange"/>
+            <formElement :formId="'vform-'+id" v-else-if="!item.hidden" :options="item"/>
           </div>
         </div>
         <div v-else-if="Array.isArray(item)" class="elements-inline">
@@ -20,8 +21,8 @@
                v-for="(subItem,subkey) in item" :key="subkey">
             <label :for="subItem.name" class="col-sm-2 control-label">{{subItem.label}}</label>
             <div class="col-sm-10">
-              <formElement v-if="!subItem.hidden&&subItem.ruleChange" :options="subItem" v-on:ruleChange="ruleChange"/>
-              <formElement v-else-if="!subItem.hidden" :options="subItem"/>
+              <formElement :formId="'vform-'+id" v-if="!subItem.hidden&&subItem.ruleChange" :options="subItem" v-on:ruleChange="ruleChange"/>
+              <formElement :formId="'vform-'+id" v-else-if="!subItem.hidden" :options="subItem"/>
             </div>
           </div>
         </div>

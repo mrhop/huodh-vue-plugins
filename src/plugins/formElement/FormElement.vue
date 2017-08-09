@@ -102,7 +102,7 @@
         fromOuter: false
       }
     },
-    props: ['dataFromParent', 'options', 'callback'],
+    props: ['dataFromParent', 'options', 'callback', 'formId'],
     methods: {
       dealWithData () {
         delete this.options.validatedMsg
@@ -186,7 +186,10 @@
         } else {
           this.fromOuter = false
           if (this.options.type === 'file' || this.options.type === 'image') {
-            document.querySelector('')!!
+            Array.from(document.querySelectorAll('#' + this.formId + ' ' + 'input[name=\'' + this.options.name + '\']')).forEach(function (val) {
+              val.value = ''
+              val.files = null
+            })
           }
         }
       },
