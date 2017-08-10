@@ -21,7 +21,8 @@
                v-for="(subItem,subkey) in item" :key="subkey">
             <label :for="subItem.name" class="col-sm-2 control-label">{{subItem.label}}</label>
             <div class="col-sm-10">
-              <formElement :formId="'vform-'+id" v-if="!subItem.hidden&&subItem.ruleChange" :options="subItem" v-on:ruleChange="ruleChange"/>
+              <formElement :formId="'vform-'+id" v-if="!subItem.hidden&&subItem.ruleChange" :options="subItem"
+                           v-on:ruleChange="ruleChange"/>
               <formElement :formId="'vform-'+id" v-else-if="!subItem.hidden" :options="subItem"/>
             </div>
           </div>
@@ -168,9 +169,9 @@
             this.$options.errorModalData.header = this.error.title
           }
           this.$options.errorModalData.content = this.error.message
+          this.$Vue.createModal({modalData: this.$options.errorModalData})
+          this.removeFormError({id: this.id})
         }
-        this.$Vue.createModal({modalData: this.$options.errorModalData})
-        this.removeFormError({id: this.id})
       },
       success: function () {
         let data = this.$store.getters.data(this.id)

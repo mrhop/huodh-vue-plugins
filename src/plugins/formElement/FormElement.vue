@@ -108,7 +108,10 @@
     props: ['dataFromParent', 'options', 'callback', 'formId'],
     methods: {
       dealWithData () {
-        delete this.options.validatedMsg
+        if (!this.options.changedByOtherElement) {
+          delete this.options.validatedMsg
+          utilfuns.validateSub(this.options)
+        }
         if (this.dataFromParent) {
           this.dataFromParent[this.options.name] = this.options.defaultValue
         }
@@ -118,7 +121,7 @@
         if (this.options.ruleChange) {
           this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
         }
-        utilfuns.validateSub(this.options)
+        delete this.options.changedByOtherElement
       },
       dealWithDate (value) {
         var parts

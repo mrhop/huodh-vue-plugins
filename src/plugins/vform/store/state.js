@@ -2,6 +2,7 @@
  * Created by Donghui Huo on 2017/3/29.
  */
 import lodash from 'lodash'
+import Vue from 'vue'
 const state = {
   dataArray: [],
   dataArrayInit: [],
@@ -115,7 +116,7 @@ const utilfuns = {
     }
   },
   initForm (id, data, additionalParams) {
-    lodash.remove(state.dataArray, function (item) {
+    let tempForm = lodash.remove(state.dataArray, function (item) {
       return item.id === id
     })
     lodash.remove(state.dataArrayInit, function (item) {
@@ -130,7 +131,8 @@ const utilfuns = {
       if (items[key].locked === undefined || items[key].locked === null) {
         items[key].locked = false
       }
-      if (!items[key].hidden) {
+      items[key].validatedMsg = undefined
+      if (!items[key].hidden && tempForm && tempForm.length > 0 && tempForm[0].rules.items.length > 0) {
         items[key].initForm = true
       }
       if (items[key].type === 'file' || items[key].type === 'image') {
@@ -151,7 +153,7 @@ const utilfuns = {
             items[key].defaultValue = undefined
           }
         } else if (items[key].defaultValue === undefined) {
-          items[key].defaultValue = null
+          items[key].defaultValue = undefined
         }
       }
     }
@@ -171,14 +173,16 @@ const utilfuns = {
       for (var j in data) {
         var itemTemp = data[j]
         if (!Array.isArray(item) && item.name === itemTemp.name) {
+          Vue.set(item, 'validatedMsg', undefined)
+          item.changedByOtherElement = true
           lodash.assign(item, itemTemp)
-          delete item.validatedMsg
         } else if (Array.isArray(item)) {
           for (var k in item) {
             var subItem = item[k]
             if (subItem.name === itemTemp.name) {
+              Vue.set(subItem, 'validatedMsg', undefined)
+              subItem.changedByOtherElement = true
               lodash.assign(subItem, itemTemp)
-              delete subItem.validatedMsg
             }
           }
         }
@@ -201,19 +205,28 @@ const utilfuns = {
     let multipart = false
     let data = {}
     let validateSub = function (item) {
-      if (item.type === 'file') {
-        multipart = true
-      }
-      if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
-        let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
-        if (validatedMsg) {
-          item.validatedMsg = validatedMsg
-          returnFlag = false
-        } else {
-          data[item.name] = item.defaultValue === '' ? null : item.defaultValue
-        }
+      if (item.validatedMsg) {
+        returnFlag = false
       } else {
-        data[item.name] = item.defaultValue === '' ? null : item.defaultValue
+        if (item.type === 'file') {
+          multipart = true
+        }
+        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
+          let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
+          if (validatedMsg) {
+            item.validatedMsg = validatedMsg
+            returnFlag = false
+          } else {
+            if (item.defaultValue !== undefined) {
+              data[item.name] = item.defaultValue
+            }
+            data[item.name] = item.defaultValue === undefined ? null : item.defaultValue
+          }
+        } else {
+          if (item.defaultValue !== undefined) {
+            data[item.name] = item.defaultValue
+          }
+        }
       }
     }
     items.forEach(function (item) {
