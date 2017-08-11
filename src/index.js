@@ -1,4 +1,5 @@
 import modal from './plugins/modal/Modal.vue'
+import modalTpl from './plugins/modalTpl/ModalTpl.vue'
 import panel from './plugins/panel/Panel.vue'
 import tab from './plugins/tab/Tab.vue'
 import tree from './plugins/tree/Tree.vue'
@@ -12,6 +13,7 @@ export default {
   generateStore,
   config,
   modal,
+  modalTpl,
   panel,
   tab,
   tree,
