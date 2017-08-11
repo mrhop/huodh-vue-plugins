@@ -4,7 +4,7 @@
       <div class="input" @click="togglePanel"
            v-text="range ? valueFormat[0] + ' -- ' + valueFormat[1] : valueFormat"></div>
       <transition name="fade">
-        <img v-show="!readonly" class="cancel-btn" src="./datepicker-cancel.png" v-show="showCancel" @click="clear">
+        <span v-show="!readonly" class="cancel-btn" v-show="showCancel" @click="clear"/>
       </transition>
     </div>
     <transition name="toggle">
@@ -257,7 +257,7 @@
         }
       },
       clear () {
-        this.$emit('input', this.range ? ['', ''] : '')
+        this.$emit('input', undefined)
         this.valueFormat = this.range ? ['', ''] : ''
         let now = new Date()
         this.year = now.getFullYear()
@@ -342,10 +342,10 @@
       range (newVal, oldVal) {
         if (newVal === oldVal) return
         if (newVal && Object.prototype.toString.call(this.value).slice(8, -1) === 'String') {
-          this.$emit('input', ['', ''])
+          this.$emit('input', undefined)
         }
         if (!newVal && Object.prototype.toString.call(this.value).slice(8, -1) === 'Array') {
-          this.$emit('input', '')
+          this.$emit('input', undefined)
         }
       },
       value () {
@@ -469,8 +469,13 @@
         outline: none;
       }
       .cancel-btn {
+        cursor: pointer;
+        border: none;
         height: 14px;
         width: 14px;
+        background-image: url("./datepicker-cancel.png");
+        background-position: center;
+        background-size: cover;
       }
     }
     .date-panel {

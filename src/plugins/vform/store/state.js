@@ -109,7 +109,7 @@ const utilfuns = {
       let items = dataLocal.rules.items
       for (var key in items) {
         if (!items[key].hidden) {
-          items[key].initForm = true
+          items[key].init = true
         }
       }
       state.dataArray.push(dataLocal)
@@ -133,7 +133,7 @@ const utilfuns = {
       }
       items[key].validatedMsg = undefined
       if (!items[key].hidden && tempForm && tempForm.length > 0 && tempForm[0].rules.items.length > 0) {
-        items[key].initForm = true
+        items[key].init = true
       }
       if (items[key].type === 'file' || items[key].type === 'image') {
         items[key].defaultValue = {}
@@ -173,15 +173,15 @@ const utilfuns = {
       for (var j in data) {
         var itemTemp = data[j]
         if (!Array.isArray(item) && item.name === itemTemp.name) {
+          item.init = true
           Vue.set(item, 'validatedMsg', undefined)
-          item.changedByOtherElement = true
           lodash.assign(item, itemTemp)
         } else if (Array.isArray(item)) {
           for (var k in item) {
             var subItem = item[k]
             if (subItem.name === itemTemp.name) {
+              subItem.init = true
               Vue.set(subItem, 'validatedMsg', undefined)
-              subItem.changedByOtherElement = true
               lodash.assign(subItem, itemTemp)
             }
           }
@@ -214,7 +214,7 @@ const utilfuns = {
         if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
           let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
           if (validatedMsg) {
-            item.validatedMsg = validatedMsg
+            Vue.set(item, 'validatedMsg', validatedMsg)
             returnFlag = false
           } else {
             if (item.defaultValue !== undefined) {
@@ -244,7 +244,7 @@ const utilfuns = {
     if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
       let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
       if (validatedMsg) {
-        item.validatedMsg = validatedMsg
+        Vue.set(item, 'validatedMsg', validatedMsg)
       }
     }
   }

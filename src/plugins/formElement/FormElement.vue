@@ -3,15 +3,15 @@
     <input
       v-if="options.type==='hidden'"
       type="hidden" class="form-control" :name="options.name"
-      v-model="options.defaultValue" ref="formElementEl"/>
+      v-model="elementValue" ref="formElementEl"/>
     <input
       v-if="options.type==='text'"
       type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
-      v-model="options.defaultValue" ref="formElementEl" :readonly="options.locked"/>
+      v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
     <input
       v-if="options.type==='button'"
       type="button" class="form-control" :name="options.name"
-      :value="options.defaultValue" ref="formElementEl" @click="buttonClick"/>
+      :value="elementValue" ref="formElementEl" @click="buttonClick"/>
     <div :class="['file-block',options.validatedMsg&&options.validatedMsg[options.name+n]?'file-error':'']"
          v-else-if="options.type==='file'||options.type==='image'" v-for="n in (options.quantity||1)">
       <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
@@ -22,57 +22,57 @@
     <input
       v-else-if="options.type==='password'"
       type="password" class="form-control" :name="options.name"
-      v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
+      v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
     <input
       v-else-if="options.type==='number'"
       type="number" class="form-control" :name="options.name"
-      v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
+      v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder" :readonly="options.locked"/>
     <div class="select-block" v-else-if="options.type==='select'" @mouseenter="showSelectCancel = true"
          @mouseleave="showSelectCancel = false">
       <select class="form-control" :name="options.name"
-              v-model="options.defaultValue" ref="formElementEl" :placeholder="options.placeholder">
+              v-model="elementValue" ref="formElementEl" :placeholder="options.placeholder">
         <option v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey" :value="selectItem.value">
           {{selectItem.label}}
         </option>
       </select>
       <transition name="fade">
-        <img class="cancel-btn" src="./select-cancel.png" @click="clearSelect" v-show="showSelectCancel">
+        <span class="cancel-btn" @click="clearSelect" v-show="showSelectCancel"/>
       </transition>
     </div>
     <label v-else-if="options.type==='radio' && !options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="radio" :name="options.name" :value="selectItem.value" v-model="options.defaultValue"
+      <input type="radio" :name="options.name" :value="selectItem.value" v-model="elementValue"
              ref="formElementEl">
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='radio' && options.locked" class="radio-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
       <input type="radio" :name="options.name" :value="selectItem.value"
-             :checked="options.defaultValue === selectItem.value"
+             :checked="elementValue === selectItem.value"
              ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='checkbox' && !options.locked" class="checkbox-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="checkbox" :name="options.name" :value="selectItem.value" v-model="options.defaultValue"
+      <input type="checkbox" :name="options.name" :value="selectItem.value" v-model="elementValue"
              ref="formElementEl">
       {{selectItem.label}}
     </label>
     <label v-else-if="options.type==='checkbox' && options.locked" class="checkbox-inline"
            v-for="(selectItem, selectItemKey) in options.items" :key="selectItemKey">
-      <input type="checkbox" :name="options.name" :checked="options.defaultValue.includes(selectItem.value)"
+      <input type="checkbox" :name="options.name" :checked="elementValue.includes(selectItem.value)"
              :value="selectItem.value" ref="formElementEl"
              v-on:click.prevent>
       {{selectItem.label}}
     </label>
     <textarea v-else-if="options.type==='textarea'" class="form-control" :name="options.name"
-              :rows="options.rows?options.rows:3" v-model="options.defaultValue" ref="formElementEl"
+              :rows="options.rows?options.rows:3" v-model="elementValue" ref="formElementEl"
               :placeholder="options.placeholder" :readonly="options.locked"/>
-    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="options.defaultValue"
+    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
     <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked"
-                :value="options.defaultValue"
+                :value="elementValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
     <div class="tree-block" v-else-if="options.type==='tree'" @mouseenter="showSelectCancel = true"
          @mouseleave="showSelectCancel = false">
@@ -80,7 +80,7 @@
         type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
         v-model="treeValue" ref="formElementEl" :readonly="true" @click="showOrHideTree"/>
       <transition name="fade">
-        <img class="cancel-btn" src="./select-cancel.png" @click="clearSelect" v-show="showSelectCancel">
+        <span class="cancel-btn" @click="clearSelect" v-show="showSelectCancel"/>
       </transition>
       <transition name="toggle">
         <treeForForm v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
@@ -92,6 +92,7 @@
   </div>
 </template>
 <script>
+  import Vue from 'vue'
   import {utilfuns} from '../vform/store/state'
   import datePicker from '../datePicker/DatePicker.vue'
   import treeForForm from '../tree/TreeForForm.vue'
@@ -99,59 +100,66 @@
     name: 'form-element',
     data () {
       return {
+        elementValue: this.options.defaultValue,
         showSelectCancel: false,
         showTree: false,
-        treeValue: this.options.defaultLabel || '',
+        treeValue: this.options.defaultLabel || undefined,
         fromOuter: false
       }
     },
     props: ['dataFromParent', 'options', 'callback', 'formId'],
     methods: {
       dealWithData () {
-        if (!this.options.changedByOtherElement) {
-          delete this.options.validatedMsg
-          utilfuns.validateSub(this.options)
-        }
+        this.options.defaultValue = this.elementValue
         if (this.dataFromParent) {
-          this.dataFromParent[this.options.name] = this.options.defaultValue
+          this.dataFromParent[this.options.name] = this.elementValue
+        }
+        if (!this.options.init) {
+          Vue.set(this.options, 'validatedMsg', undefined)
+          utilfuns.validateSub(this.options)
+        } else {
+          delete this.options.init
         }
         if (this.callback && typeof this.callback === 'function') {
           this.callback(this.$refs.formElementEl)
         }
         if (this.options.ruleChange) {
-          this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
+          this.$emit('ruleChange', {[this.options.name]: this.elementValue})
         }
-        delete this.options.changedByOtherElement
       },
       dealWithDate (value) {
         var parts
-        if (this.options.type === 'date') {
-          parts = value.split('-')
-          this.options.defaultValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
-        } else if (this.options.type === 'daterange') {
-          var tempArr = []
-          for (var index in value) {
-            parts = value[index].split('-')
-            tempArr.push(new Date(parts[0], parts[1] - 1, parts[2]).getTime())
+        if (value) {
+          if (this.options.type === 'date') {
+            parts = value.split('-')
+            this.elementValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
+          } else if (this.options.type === 'daterange') {
+            var tempArr = []
+            for (var index in value) {
+              parts = value[index].split('-')
+              tempArr.push(new Date(parts[0], parts[1] - 1, parts[2]).getTime())
+            }
+            this.elementValue = tempArr
           }
-          this.options.defaultValue = tempArr
+        } else {
+          this.elementValue = undefined
         }
       },
       clearSelect () {
-        this.options.defaultValue = ''
-        this.treeValue = ''
+        this.elementValue = undefined
+        this.treeValue = undefined
       },
       buttonClick () {
         if (this.options.ruleChange) {
-          this.$emit('ruleChange', {[this.options.name]: this.options.defaultValue})
+          this.$emit('ruleChange', {[this.options.name]: this.elementValue})
         }
       },
       fileChange (event) {
         // do sth
         if (event.target.files.length > 0) {
-          this.options.defaultValue[event.target.getAttribute('data-index')] = event.target.files
+          this.elementValue[event.target.getAttribute('data-index')] = event.target.files
         } else {
-          delete this.options.defaultValue[event.target.getAttribute('data-index')]
+          delete this.elementValue[event.target.getAttribute('data-index')]
         }
         this.dealWithData()
         this.$forceUpdate()
@@ -165,10 +173,10 @@
         const {value, label} = data || {}
         if (value) {
           this.treeValue = label
-          this.options.defaultValue = value
+          this.elementValue = value
         } else {
-          this.treeValue = ''
-          this.options.defaultValue = ''
+          this.treeValue = undefined
+          this.elementValue = undefined
         }
         this.showTree = false
       },
@@ -179,18 +187,19 @@
       }
     },
     watch: {
+      elementValue: function () {
+        this.dealWithData()
+      },
       options: {
         handler: function (val, oldVal) {
-          if (!val.initForm) {
-            this.dealWithData()
-          } else {
+          if (val.init) {
+            this.elementValue = val.defaultValue
             if (val.type === 'file' || val.type === 'image') {
               Array.from(document.querySelectorAll('#' + this.formId + ' ' + 'input[name=\'' + this.options.name + '\']')).forEach(function (val) {
                 val.value = ''
                 val.files = null
               })
             }
-            delete val.initForm
           }
         },
         deep: true
@@ -235,8 +244,13 @@
     }
     .select-block, .tree-block {
       .cancel-btn {
+        cursor: pointer;
+        border: none;
         height: 14px;
         width: 14px;
+        background-image: url("./select-cancel.png");
+        background-position: center;
+        background-size: cover;
         position: absolute;
         right: 34px;
         top: 10px;
