@@ -162,7 +162,6 @@
           delete this.elementValue[event.target.getAttribute('data-index')]
         }
         this.dealWithData()
-        this.$forceUpdate()
       },
       showOrHideTree () {
         console.log('show or hide')

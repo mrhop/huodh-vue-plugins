@@ -258,7 +258,8 @@
 
   .form-wrapper {
     margin: 15px;
-    overflow: hidden;
+    overflow: visible;
+    padding-bottom: 10px;
     .actions {
       width: 100%;
       overflow: hidden;

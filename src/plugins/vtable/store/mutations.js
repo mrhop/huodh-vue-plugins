@@ -11,6 +11,17 @@ export default {
     if (callParameters.init || callParameters.data && callParameters.data.init) {
       if (data.rules && data.rules.header) {
         Vue.set(data.rules, 'headerConst', lodash.cloneDeep(data.rules.header))
+        for (var key in data.rules.header) {
+          if (data.rules.header[key].editable) {
+            if (data.rules.header[key].type === 'checkbox') {
+              Vue.set(data.rules.header[key], 'defaultValue', [])
+            } else if (data.rules.header[key].type === 'file' || data.rules.header[key].type === 'image') {
+              Vue.set(data.rules.header[key], 'defaultValue', {})
+            } else {
+              Vue.set(data.rules.header[key], 'defaultValue', undefined)
+            }
+          }
+        }
       }
     }
     utilfuns.setTable(id, data, {operation: 'getTable'})

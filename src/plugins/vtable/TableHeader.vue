@@ -2,13 +2,13 @@
   <thead class="table-header" v-if="header">
   <tr>
     <tableHeaderTh v-for="(item, key) in header" :key="key" :item="item" :sorts="sorts"
-                   v-on:sortIt="filtersChange"/>
+                   v-on:sortIt="continuousInputCheck"/>
     <th class="theader-actions">操作</th>
   </tr>
   <tr v-if="feature&&feature.filter" class="form-group">
     <th v-for="(item, key) in header" :key="key">
       <formElement v-if="item.filter" :dataFromParent="filters" :options="item"
-                   :callback="filtersChange.bind(this)"
+                   :callback="continuousInputCheck.bind(this)"
                    :key="key"/>
     </th>
     <th></th>
@@ -25,24 +25,28 @@
     data () {
       return {
         pageSize: this.pager ? this.pager.pageSize : 15,
-        sortOrderType: ''
+        sortOrderType: '',
+        lastInputTime: new Date()
       }
     },
     props: ['header', 'action', 'feature', 'pager', 'filters', 'sorts', 'actionUrls', 'actions', 'tableId'],
     methods: lodash.assignIn({
-      filtersChange (target) {
+      continuousInputCheck (target) {
+        this.lastInputTime = new Date()
         lodash.debounce(function () {
-          let pager = this.pager
-          let filters = this.filters
-          let sorts = this.sorts
-          this.tableGetList({
-            id: this.tableId,
-            listUrl: this.actionUrls && this.actionUrls.listUrl,
-            listAction: this.actions && this.actions.list,
-            pager,
-            filters,
-            sorts
-          })
+          if ((new Date().getTime() - this.lastInputTime.getTime()) >= 500) {
+            let pager = this.pager
+            let filters = this.filters
+            let sorts = this.sorts
+            this.tableGetList({
+              id: this.tableId,
+              listUrl: this.actionUrls && this.actionUrls.listUrl,
+              listAction: this.actions && this.actions.list,
+              pager,
+              filters,
+              sorts
+            })
+          }
         }.bind(this), 500)()
       }
     }, mapActions([
@@ -53,6 +57,7 @@
 </script>
 <style rel="stylesheet/scss" lang="scss">
   @import "../../scss/import.scss";
+
   thead.table-header {
     tr {
       th {

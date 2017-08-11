@@ -13,93 +13,17 @@
     data () {
       return {
         dataChanged: {},
-        showEdit: false
+        showEdit: false,
+        dataFormated: this.dataFormat(this.item)
       }
     },
     computed: {
       headerItem () {
-        return this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey]
-      },
-      dataFormated () {
-        let headerItem = this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey]
-        if (headerItem) {
-          switch (headerItem.type) {
-            case 'date':
-              if (this.item) {
-                var dateTmp = new Date(+this.item)
-                return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
-              } else {
-                return ''
-              }
-            case 'file':
-              if (this.item) {
-                var returnFiles = ``
-                if (this.item instanceof Array) {
-                  for (let index in this.item) {
-                    let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                    returnFiles += `<a href='${this.item[index]}' target="_blank">${fileName}</a>`
-                  }
-                } else {
-                  let fileName = this.item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnFiles += `<a href='${this.item}' target="_blank">${fileName}</a>`
-                }
-                return returnFiles
-              } else {
-                return ''
-              }
-            case 'image':
-              if (this.item) {
-                var returnImages = ``
-                if (this.item instanceof Array) {
-                  for (let index in this.item) {
-                    let fileName = this.item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                    returnImages += `<a href='${this.item[index]}' target="_blank">${fileName}<img src='${this.item[index]}'/></a>`
-                  }
-                } else {
-                  let fileName = this.item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
-                  returnImages += `<a href='${this.item}' target="_blank">${fileName}<img src='${this.item}'/></a>`
-                }
-                return returnImages
-              } else {
-                return ''
-              }
-            case 'checkbox':
-              if (this.item) {
-                if (headerItem.items) {
-                  var itemTemp = []
-                  for (var index in headerItem.items) {
-                    if (this.item.indexOf(headerItem.items[index].value) > -1) {
-                      itemTemp.push(headerItem.items[index].label)
-                    }
-                  }
-                  return lodash.flatten(itemTemp)
-                } else {
-                  return lodash.flatten(this.item)
-                }
-              } else {
-                return ''
-              }
-            case 'select':
-            case 'radio':
-              if (this.item) {
-                if (headerItem.items) {
-                  for (var index1 in headerItem.items) {
-                    if (this.item === headerItem.items[index1].value) {
-                      return headerItem.items[index1].label
-                    }
-                  }
-                  return this.item
-                } else {
-                  return this.item
-                }
-              } else {
-                return ''
-              }
-            default:
-              return this.item
-          }
+        let returnTmp = lodash.cloneDeep(this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey])
+        if (this.item) {
+          returnTmp.defaultValue = this.item
         }
-        return this.item
+        return returnTmp
       }
     },
     props: ['rowKey', 'item', 'tdKey', 'header', 'hasSn', 'actions', 'editable'],
@@ -110,20 +34,17 @@
             var returnData = this.actions.edit({key: this.rowKey, data: this.dataChanged, headerItem: this.headerItem})
             if (returnData !== false) {
               if (this.headerItem.type === 'file' || this.headerItem.type === 'image') {
-                this.item = returnData
+                this.dataFormated = this.dataFormat(returnData)
               } else {
-                this.item = this.headerItem.defaultValue
-                delete this.headerItem.defaultValue
+                this.dataFormated = this.dataFormat(this.headerItem.defaultValue)
               }
               this.showEdit = false
             }
           } else {
-            this.item = this.headerItem.defaultValue
-            delete this.headerItem.defaultValue
+            this.dataFormated = this.dataFormat(this.headerItem.defaultValue)
             this.showEdit = false
           }
         } else {
-          delete this.headerItem.defaultValue
           this.showEdit = false
         }
       },
@@ -131,6 +52,7 @@
         if (!this.showEdit && this.editable && this.headerItem.editable) {
           if (this.headerItem.type !== 'file' && this.headerItem.type !== 'image') {
             Vue.set(this.headerItem, 'defaultValue', this.item)
+            Vue.set(this.headerItem, 'init', true)
           }
           this.showEdit = true
         }
@@ -139,9 +61,75 @@
         if (!this.$el.contains(e.target)) {
           this.showEdit = false
         }
+      },
+      dataFormat (item) {
+        let headerItem = this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey]
+        if (headerItem && item !== undefined && item !== null) {
+          switch (headerItem.type) {
+            case 'date':
+              var dateTmp = new Date(+item)
+              return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
+            case 'file':
+              var returnFiles = ``
+              if (item instanceof Array) {
+                for (let index in item) {
+                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnFiles += `<a href='${item[index]}' target="_blank">${fileName}</a>`
+                }
+              } else {
+                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                returnFiles += `<a href='${item}' target="_blank">${fileName}</a>`
+              }
+              return returnFiles
+            case 'image':
+              var returnImages = ``
+              if (item instanceof Array) {
+                for (let index in item) {
+                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  returnImages += `<a href='${item[index]}' target="_blank">${fileName}<img src='${item[index]}'/></a>`
+                }
+              } else {
+                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                returnImages += `<a href='${item}' target="_blank">${fileName}<img src='${item}'/></a>`
+              }
+              return returnImages
+            case 'checkbox':
+              if (headerItem.items) {
+                var itemTemp = []
+                for (var index in headerItem.items) {
+                  if (item.indexOf(headerItem.items[index].value) > -1) {
+                    itemTemp.push(headerItem.items[index].label)
+                  }
+                }
+                return lodash.flatten(itemTemp)
+              } else {
+                return lodash.flatten(item)
+              }
+            case 'select':
+            case 'radio':
+              if (headerItem.items) {
+                for (var index1 in headerItem.items) {
+                  if (item === headerItem.items[index1].value) {
+                    return headerItem.items[index1].label
+                  }
+                }
+                return item
+              } else {
+                return item
+              }
+            default:
+              return item
+          }
+        }
+        return item
       }
     },
     components: {formElement},
+    watch: {
+      item: function () {
+        this.dataFormated = this.dataFormat(this.item)
+      }
+    },
     mounted () {
       this.$nextTick(function () {
         window.addEventListener('click', this.close)
