@@ -50,7 +50,7 @@
 </template>
 <script>
   import lodash from 'lodash'
-  import {mapActions} from 'vuex'
+  import { mapActions } from 'vuex'
   import tableHeader from './TableHeader.vue'
   import tableBody from './TableBody.vue'
   import tableFooter from './TableFooter.vue'
@@ -144,20 +144,11 @@
       'clearTable'
     ])),
     created () {
-      if (this.keepAlive && this.header) {
-        // do refresh
-        this.tableRefreshList({
-          id: this.id,
-          listUrl: this.actionUrls && this.actionUrls.listUrl,
-          listAction: this.actions && this.actions.list
-        })
-      } else {
-        this.tableInit({
-          id: this.id,
-          listUrl: this.actionUrls && this.actionUrls.listUrl,
-          listAction: this.actions && this.actions.list
-        })
-      }
+      this.tableInit({
+        id: this.id,
+        listUrl: this.actionUrls && this.actionUrls.listUrl,
+        listAction: this.actions && this.actions.list
+      })
     },
     destoryed () {
       if (!this.keepAlive) {

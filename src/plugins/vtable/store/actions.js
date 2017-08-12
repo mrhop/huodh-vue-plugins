@@ -1,24 +1,44 @@
 /**
  * Created by Donghui Huo on 2017/3/29.
  */
-import {types, utilfuns} from './state'
+import { types, utilfuns } from './state'
 // import Vue from 'vue'
 export default {
   tableInit: function ({commit, state}, {id, listUrl, listAction}) {
+    let dataLocal = utilfuns.getTable(id)
     if (listUrl) {
       commit(types.TABLE_REQUEST, {
         [global.CALL_SERVER_PLUGIN]: {
           id,
           httpType: 'post',
           endpoint: listUrl,
-          data: {pager: state.default.data.pager, init: true},
+          data: {
+            pager: dataLocal.data.pager,
+            filters: dataLocal.data.filters,
+            sorts: dataLocal.data.sorts,
+            init: dataLocal.init
+          },
           types: {success_type: types.TABLE_SUCCESS, failure_type: types.TABLE_FAILURE}
         }
       })
     } else if (listAction) {
-      var data = listAction({pager: state.default.data.pager, init: true})
+      var data = listAction({
+        pager: dataLocal.data.pager,
+        filters: dataLocal.data.filters,
+        sorts: dataLocal.data.sorts,
+        init: dataLocal.init
+      })
       if (data) {
-        commit(types.TABLE_SUCCESS, {id, data: data, callParameters: {pager: state.default.data.pager, init: true}})
+        commit(types.TABLE_SUCCESS, {
+          id,
+          data: data,
+          callParameters: {
+            pager: dataLocal.data.pager,
+            filters: dataLocal.data.filters,
+            sorts: dataLocal.data.sorts,
+            init: dataLocal.init
+          }
+        })
       } else if (data === false) {
         commit(types.TABLE_FAILURE, {id, error: 'error from outside action'})
       }

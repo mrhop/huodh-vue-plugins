@@ -23,7 +23,8 @@ const state = {
       filters: {},
       sorts: {}
     },
-    operation: 'getTable'
+    operation: 'getTable',
+    init: true
   }
 }
 const types = {

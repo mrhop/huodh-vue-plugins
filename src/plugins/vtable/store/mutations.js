@@ -3,7 +3,8 @@
  */
 import Vue from 'vue'
 import lodash from 'lodash'
-import {types, utilfuns} from './state'
+import { types, utilfuns } from './state'
+
 export default {
   [types.TABLE_REQUEST] (state) {
   },
@@ -23,6 +24,7 @@ export default {
           }
         }
       }
+      data.init = false
     }
     utilfuns.setTable(id, data, {operation: 'getTable'})
   },
