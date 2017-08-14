@@ -35,8 +35,8 @@ const types = {
   REMOVE_FORM_SUCCESS: 'REMOVE_FORM_SUCCESS'
 }
 const validateInternal = function (itemData, validateRules, type, item) {
-  var tmpData = null
-  if (itemData != null && itemData !== undefined) {
+  var tmpData
+  if (itemData !== null && itemData !== undefined) {
     if (typeof itemData === 'number' || typeof itemData === 'boolean') {
       itemData = itemData + ''
     }
@@ -48,45 +48,45 @@ const validateInternal = function (itemData, validateRules, type, item) {
       tmpData = itemData
     }
   }
-  if (!tmpData) {
-    tmpData = ''
-  }
-  if (type !== 'file') {
-    for (var index in validateRules) {
-      let validateRule = validateRules[index]
-      let regExp = new RegExp(validateRule.regex)
-      if (!regExp.test(tmpData)) {
-        return validateRule.errorMsg
-      }
-    }
-    return null
-  } else {
-    var errorFileMsg = {}
-    if (validateRules) {
-      for (var index1 in validateRules) {
-        let validateRule = validateRules[index1]
+  tmpData = tmpData || ''
+  if (item.required !== false || !lodash.isEmpty(itemData)) {
+    if (type !== 'file') {
+      for (var index in validateRules) {
+        let validateRule = validateRules[index]
         let regExp = new RegExp(validateRule.regex)
-        for (var key in tmpData) {
-          if (tmpData[key] && !errorFileMsg[key] && !regExp.test(tmpData[key][0].name)) {
-            errorFileMsg[key] = validateRule.errorMsg
+        if (!regExp.test(tmpData)) {
+          return validateRule.errorMsg
+        }
+      }
+      return null
+    } else {
+      var errorFileMsg = {}
+      if (validateRules) {
+        for (var index1 in validateRules) {
+          let validateRule = validateRules[index1]
+          let regExp = new RegExp(validateRule.regex)
+          for (var key in tmpData) {
+            if (tmpData[key] && !errorFileMsg[key] && !regExp.test(tmpData[key][0].name)) {
+              errorFileMsg[key] = validateRule.errorMsg
+            }
           }
         }
       }
-    }
-    if (item.required && lodash.isEmpty(itemData)) {
-      errorFileMsg[item.name] = '不能为空'
-      return errorFileMsg
-    }
-    if (item.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(itemData)) {
-      for (var fileIndex in itemData) {
-        if (itemData[fileIndex] && itemData[fileIndex][0] instanceof File) {
-          if (itemData[fileIndex][0].size > item.maxSize) {
-            errorFileMsg[fileIndex] = '超过大小上限:' + item.maxSize + '字节'
+      if (lodash.isEmpty(itemData)) {
+        errorFileMsg[item.name] = '不能为空'
+        return errorFileMsg
+      }
+      if (item.maxSize && lodash.isEmpty(errorFileMsg) && !lodash.isEmpty(itemData)) {
+        for (var fileIndex in itemData) {
+          if (itemData[fileIndex] && itemData[fileIndex][0] instanceof File) {
+            if (itemData[fileIndex][0].size > item.maxSize) {
+              errorFileMsg[fileIndex] = '超过大小上限:' + item.maxSize + '字节'
+            }
           }
         }
       }
+      return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
     }
-    return lodash.isEmpty(errorFileMsg) ? null : errorFileMsg
   }
 }
 const utilfuns = {
@@ -152,7 +152,7 @@ const utilfuns = {
           if (!items[key].defaultValue) {
             items[key].defaultValue = undefined
           }
-        } else if (items[key].defaultValue === undefined) {
+        } else if (items[key].defaultValue === undefined || items[key].defaultValue === null) {
           items[key].defaultValue = undefined
         }
       }
@@ -220,7 +220,6 @@ const utilfuns = {
             if (item.defaultValue !== undefined) {
               data[item.name] = item.defaultValue
             }
-            data[item.name] = item.defaultValue === undefined ? null : item.defaultValue
           }
         } else {
           if (item.defaultValue !== undefined) {
