@@ -34,7 +34,8 @@
       continuousInputCheck (target) {
         this.lastInputTime = new Date()
         lodash.debounce(function () {
-          if ((new Date().getTime() - this.lastInputTime.getTime()) >= 500) {
+          let date = new Date()
+          if ((date.getTime() - this.lastInputTime.getTime()) > 499) {
             let pager = this.pager
             let filters = this.filters
             let sorts = this.sorts
