@@ -41,7 +41,8 @@ const validateInternal = function (itemData, validateRules, type, item) {
       itemData = itemData + ''
     }
     if (typeof itemData === 'string') {
-      tmpData = itemData.replace(/(^\s*)|(\s*$)/g, '')
+      tmpData = itemData
+      // tmpData = itemData.replace(/(^\s*)|(\s*$)/g, '')
     } else if (itemData instanceof Array && itemData.length > 0) {
       tmpData = JSON.stringify(itemData)
     } else if (itemData instanceof Object) {
@@ -50,7 +51,7 @@ const validateInternal = function (itemData, validateRules, type, item) {
   }
   tmpData = tmpData || ''
   if (item.required !== false || !lodash.isEmpty(itemData)) {
-    if (type !== 'file') {
+    if (type !== 'file' && type !== 'image') {
       for (var index in validateRules) {
         let validateRule = validateRules[index]
         let regExp = new RegExp(validateRule.regex)
@@ -208,10 +209,10 @@ const utilfuns = {
       if (item.validatedMsg) {
         returnFlag = false
       } else {
-        if (item.type === 'file') {
+        if (item.type === 'file' || item.type === 'image') {
           multipart = true
         }
-        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
+        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file' || item.type === 'image')) {
           let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
           if (validatedMsg) {
             Vue.set(item, 'validatedMsg', validatedMsg)
@@ -240,7 +241,7 @@ const utilfuns = {
     return {items, data, returnFlag, multipart}
   },
   validateSub: function (item) {
-    if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file')) {
+    if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file' || item.type === 'image')) {
       let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
       if (validatedMsg) {
         Vue.set(item, 'validatedMsg', validatedMsg)
