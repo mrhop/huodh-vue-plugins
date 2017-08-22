@@ -1,7 +1,7 @@
 /**
  * Created by Donghui Huo on 2017/3/29.
  */
-import { types, utilfuns } from './state'
+import {types, utilfuns} from './state'
 // import Vue from 'vue'
 export default {
   tableInit: function ({commit, state}, {id, listUrl, listAction}) {
@@ -124,5 +124,25 @@ export default {
   },
   clearTable: function ({commit}, {id}) {
     commit(types.CLEAR_TABLE, {id})
+  },
+  tableRuleChange: function ({commit, state}, {id, parameters, ruleChangeUrl, ruleChangeAction}) {
+    if (ruleChangeUrl) {
+      commit(types.TABLE_RULE_CHANGE_REQUEST, {
+        [global.CALL_SERVER_PLUGIN]: {
+          id,
+          httpType: 'post',
+          endpoint: ruleChangeUrl,
+          data: parameters,
+          types: {success_type: types.TABLE_RULE_CHANGE_SUCCESS, failure_type: types.TABLE_RULE_CHANGE_FAILURE}
+        }
+      })
+    } else if (ruleChangeAction) {
+      var data = ruleChangeAction(parameters)
+      if (data) {
+        commit(types.TABLE_RULE_CHANGE_SUCCESS, {
+          id, data, callParameters: {id, parameters, ruleChangeUrl, ruleChangeAction}
+        })
+      }
+    }
   }
 }

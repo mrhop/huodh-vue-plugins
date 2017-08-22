@@ -7,7 +7,11 @@
   </tr>
   <tr v-if="feature&&feature.filter" class="form-group">
     <th v-for="(item, key) in header" :key="key">
-      <formElement v-if="item.filter" :dataFromParent="filters" :options="item"
+      <formElement v-if="item.filter&&item.ruleChange" :dataFromParent="filters" :options="item"
+                   :callback="continuousInputCheck.bind(this)"
+                   v-on:ruleChange="ruleChange"
+                   :key="key"/>
+      <formElement v-else-if="item.filter" :dataFromParent="filters" :options="item"
                    :callback="continuousInputCheck.bind(this)"
                    :key="key"/>
     </th>
@@ -49,9 +53,18 @@
             })
           }
         }.bind(this), 500)()
+      },
+      ruleChange (parameters) {
+        this.tableRuleChange({
+          id: this.tableId,
+          parameters: {changed: parameters, items: this.header},
+          ruleChangeUrl: this.actionUrls && this.actionUrls.ruleChangeUrl,
+          ruleChangeAction: this.actions && this.actions.ruleChange
+        })
       }
     }, mapActions([
-      'tableGetList'
+      'tableGetList',
+      'tableRuleChange'
     ])),
     components: {tableHeaderTh, formElement}
   }

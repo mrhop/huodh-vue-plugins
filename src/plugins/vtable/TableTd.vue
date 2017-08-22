@@ -1,6 +1,7 @@
 <template>
-  <td @click="itemClick"><span v-show="!showEdit" v-html="dataFormated"/><span v-if="editable&&headerItem.editable"
-                                                                               v-show="showEdit"><formElement
+  <td @click="itemClick"><span v-show="!showEdit" v-html="dataFormated"/><span
+    v-if="editable&&headerItem.editable&&!headerItem.literal"
+    v-show="showEdit"><formElement
     :dataFromParent="dataChanged" :options="headerItem"/><button @click.stop="itemEdit(true)">确定</button><button
     @click.stop="itemEdit(false)">取消</button></span></td>
 </template>
@@ -89,7 +90,7 @@
       },
       dataFormat (item) {
         let headerItem = this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey]
-        if (headerItem && item !== undefined && item !== null) {
+        if (headerItem && item !== undefined && item !== null && !item.literal) {
           switch (headerItem.type) {
             case 'date':
               var dateTmp = new Date(+item)

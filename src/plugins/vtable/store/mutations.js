@@ -3,7 +3,7 @@
  */
 import Vue from 'vue'
 import lodash from 'lodash'
-import { types, utilfuns } from './state'
+import {types, utilfuns} from './state'
 
 export default {
   [types.TABLE_REQUEST] (state) {
@@ -29,7 +29,8 @@ export default {
     utilfuns.setTable(id, data, {operation: 'getTable'})
   },
   [types.TABLE_FAILURE] (state, {id, error}) {
-    console.log('到达error这里')
+    console.log(error)
+    utilfuns.getTable(id).error = error
     // 应该给出一个modal的提示
   },
   [types.TABLE_DELETE_REQUEST] (state) {
@@ -43,5 +44,14 @@ export default {
   },
   [types.CLEAR_TABLE] (state, {id}) {
     utilfuns.deleteTable(id)
+  },
+  [types.TABLE_RULE_CHANGE_REQUEST] (state) {
+  },
+  [types.TABLE_RULE_CHANGE_SUCCESS] (state, {id, data, callParameters}) {
+    utilfuns.changeTableRule(id, data, {operation: 'changeRule'})
+  },
+  [types.TABLE_RULE_CHANGE_FAILURE] (state, {id, error}) {
+    console.log(error)
+    utilfuns.getTable(id).error = error
   }
 }

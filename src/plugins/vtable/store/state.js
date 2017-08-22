@@ -34,6 +34,9 @@ const types = {
   TABLE_DELETE_REQUEST: 'TABLE_DELETE_REQUEST',
   TABLE_DELETE_SUCCESS: 'TABLE_DELETE_SUCCESS',
   TABLE_DELETE_FAILURE: 'TABLE_DELETE_FAILURE',
+  TABLE_RULE_CHANGE_REQUEST: 'TABLE_RULE_CHANGE_REQUEST',
+  TABLE_RULE_CHANGE_SUCCESS: 'TABLE_RULE_CHANGE_SUCCESS',
+  TABLE_RULE_CHANGE_FAILURE: 'TABLE_RULE_CHANGE_FAILURE',
   CLEAR_TABLE: 'CLEAR_TABLE'
 }
 const utilfuns = {
@@ -70,6 +73,26 @@ const utilfuns = {
     let data = state.dataArray.find(i => i.id === id)
     if (data) {
       Vue.set(dataLocal, 'refreshTableBody', false)
+    }
+  },
+  changeTableRule (id, data, additionalParams) {
+    let dataLocal = state.dataArray.find(i => i.id === id)
+    let header = dataLocal.rules.header
+    let headerConst = dataLocal.rules.headerConst
+    for (var i in headerConst) {
+      let item = headerConst[i]
+      let itemForRow = header[i]
+      for (var j in data) {
+        let itemTemp = data[j]
+        if (item.name === itemTemp.name) {
+          Vue.set(item, 'init', true)
+          Vue.set(item, 'validatedMsg', undefined)
+          lodash.assign(item, itemTemp)
+          Vue.set(itemForRow, 'init', true)
+          Vue.set(itemForRow, 'validatedMsg', undefined)
+          lodash.assign(itemForRow, itemTemp)
+        }
+      }
     }
   }
 }
