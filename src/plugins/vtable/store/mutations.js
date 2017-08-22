@@ -11,18 +11,37 @@ export default {
   [types.TABLE_SUCCESS] (state, {id, data, callParameters}) {
     if (callParameters.init || callParameters.data && callParameters.data.init) {
       if (data.rules && data.rules.header) {
-        Vue.set(data.rules, 'headerConst', lodash.cloneDeep(data.rules.header))
         for (var key in data.rules.header) {
-          if (data.rules.header[key].editable) {
-            if (data.rules.header[key].type === 'checkbox') {
-              Vue.set(data.rules.header[key], 'defaultValue', [])
-            } else if (data.rules.header[key].type === 'file' || data.rules.header[key].type === 'image') {
-              Vue.set(data.rules.header[key], 'defaultValue', {})
+          var items = data.rules.header
+          if (items[key].editable || items[key].filter) {
+            if (items[key].type === 'file' || items[key].type === 'image') {
+              items[key].defaultValue = {}
+            } else if (items[key].type === 'tree') {
+              items[key].defaultValue = items[key].defaultValue || undefined
+              items[key].defaultLabel = items[key].defaultLabel || undefined
+              items[key].treeData = items[key].treeData || undefined
             } else {
-              Vue.set(data.rules.header[key], 'defaultValue', undefined)
+              if (items[key].type === 'checkbox') {
+                if (!items[key].items) {
+                  items[key].items = []
+                }
+                if (!items[key].defaultValue) {
+                  items[key].defaultValue = []
+                }
+              } else if (items[key].type === 'select' || items[key].type === 'radio') {
+                if (!items[key].items) {
+                  items[key].items = []
+                }
+                if (!items[key].defaultValue) {
+                  items[key].defaultValue = undefined
+                }
+              } else if (items[key].defaultValue === undefined || items[key].defaultValue === null) {
+                items[key].defaultValue = undefined
+              }
             }
           }
         }
+        Vue.set(data.rules, 'headerConst', lodash.cloneDeep(data.rules.header))
       }
       data.init = false
     }

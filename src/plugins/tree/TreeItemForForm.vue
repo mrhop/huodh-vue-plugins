@@ -1,14 +1,13 @@
 <template>
   <li class="tree-item">
     <p>
-      <a v-if="children" v-on:click="clickToggle"><span v-if="iconClass" :class="iconClass"/><span v-if="children">{{title}}</span></a>
-      <router-link v-else-if="url" :to="url"><span v-if="iconClass" :class="iconClass"/>{{title}}</router-link>
-      <a v-else-if="itemData.emitClick" @click.prevent="treeClick"><span v-if="iconClass"
-                                                                         :class="iconClass"/>{{title}}</a>
-      <span v-else><span v-if="iconClass" :class="iconClass"/>{{title}}</span>
+      <a v-if="iconClass" v-on:click="clickToggle" :class="iconClass"/>
+      <router-link v-if="itemData.url" @click.native="treeClick" :to="itemData.url">{{itemData.title}}
+      </router-link>
+      <a v-else @click.prevent="treeClick">{{itemData.title}}</a>
     </p>
-    <ul v-if="children" v-show="showChildren">
-      <treeItem v-for="item in children" :itemData="item" v-on:click="clickTransfer" :key="item.id"/>
+    <ul v-if="itemData.children" v-show="showChildren">
+      <treeItem v-for="item in itemData.children" :itemData="item" v-on:click="clickTransfer" :key="item.id"/>
     </ul>
   </li>
 </template>
@@ -17,13 +16,8 @@
     name: 'treeItem',
     data () {
       return {
-        id: null,
-        title: null,
-        url: null,
-        children: null,
         iconClass: null,
-        showChildren: false,
-        dataLocal: null
+        showChildren: false
       }
     },
     created: function () {
@@ -32,20 +26,17 @@
     props: ['itemData'],
     methods: {
       initTreeItem () {
-        if (this.itemData) {
-          this.id = this.itemData.id
-          this.title = this.itemData.title
-          this.iconClass = this.itemData.iconClass
-          this.dataLocal = this.itemData.data
-          if (!this.itemData.children) {
-            this.url = this.itemData.url
-          } else {
-            this.children = this.itemData.children
-          }
+        if (this.itemData.children) {
+          this.iconClass = 'glyphicon glyphicon-folder-close'
         }
       },
       clickToggle (event) {
         this.showChildren = !this.showChildren
+        if (this.showChildren) {
+          this.iconClass = 'glyphicon glyphicon-folder-open'
+        } else {
+          this.iconClass = 'glyphicon glyphicon-folder-close'
+        }
       },
       treeClick () {
         this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
@@ -64,10 +55,11 @@
       margin-bottom: 3px;
       a {
         cursor: pointer;
+        display: inline-block;
       }
     }
     ul {
-      padding-left: 20px;
+      padding-left: 30px;
       list-style: none;
       font-size: 15px;
       font-weight: bold;

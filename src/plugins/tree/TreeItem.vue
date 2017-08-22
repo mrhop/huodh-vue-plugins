@@ -1,25 +1,22 @@
 <template>
   <li class="tree-item">
-    <p @mouseenter="showEditable = true" @mouseleave="showEditable = false">
-      <a v-if="itemData.children&&itemData.children.length" v-on:click="clickToggle"><span v-if="!editable&&iconClass"
-                                                                                           :class="iconClass"/><span
-        v-if="editable&&!showChildren" class="glyphicon glyphicon-folder-close"/><span
-        v-if="editable&&showChildren" class="glyphicon glyphicon-folder-open"/><span class="item-text">{{itemData.title}}</span></a>
-      <router-link v-else-if="itemData.url" @click.native="treeClick" :to="itemData.url"><span v-if="iconClass"
-                                                                                               :class="iconClass"/><span
-        class="item-text">{{itemData.title}}</span>
+    <p @mouseenter="showEditable = true" @click.prevent="treeClick" @mouseleave="showEditable = false">
+      <span v-if="iconClass" :class="iconClass"/>
+      <router-link v-if="itemData.url" :to="itemData.url">
+        <span class="item-text">{{itemData.title}}</span>
       </router-link>
-      <span v-else @click="treeClick"><span v-if="iconClass" :class="iconClass"/><span class="item-text">{{itemData.title}}</span></span>
+      <a v-else>
+        <span class="item-text">{{itemData.title}}</span></a>
       <transition name="fade">
         <span v-if="editable" class="editable-span" v-show="showEditable"><a
           v-if="actionUrls&&actionUrls.addUrl||actions&&actions.add"
           class="glyphicon glyphicon-plus"
-          @click.prevent="addCurrent"/><a
+          @click.prevent.stop="addCurrent"/><a
           v-if="actionUrls&&actionUrls.editUrl||actions&&actions.edit" class="glyphicon glyphicon-edit"
-          @click.prevent="editCurrent"/><a
+          @click.prevent.stop="editCurrent"/><a
           v-if="(itemData.deletable||itemData.deletable===undefined)&&(actionUrls&&actionUrls.deleteUrl||actions&&actions.delete)"
           class="glyphicon glyphicon-trash"
-          @click.prevent="deleteCurrent"/></span>
+          @click.prevent.stop="deleteCurrent"/></span>
       </transition>
     </p>
     <ul v-if="itemData.children&&itemData.children.length" v-show="showChildren">
@@ -47,16 +44,27 @@
     props: ['itemData', 'editable', 'actionUrls', 'actions'],
     methods: {
       initTreeItem () {
-        if (this.itemData) {
-          this.iconClass = this.itemData.iconClass
+        if (this.editable && this.itemData.children) {
+          this.iconClass = 'icon glyphicon glyphicon-folder-close'
+        } else {
+          this.iconClass = this.itemData.iconClass ? 'icon ' + this.itemData.iconClass : null
         }
       },
-      clickToggle (event) {
-        this.showChildren = !this.showChildren
-        this.treeClick()
+      clickToggle () {
+        if (this.itemData.children) {
+          this.showChildren = !this.showChildren
+          if (this.editable) {
+            if (this.showChildren) {
+              this.iconClass = 'icon glyphicon glyphicon-folder-open'
+            } else {
+              this.iconClass = 'icon glyphicon glyphicon-folder-close'
+            }
+          }
+        }
       },
       treeClick () {
         this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
+        this.clickToggle()
       },
       clickTransfer: function (args) {
         this.$emit('click', args)
@@ -87,16 +95,14 @@
 
   li.tree-item {
     > p {
+      cursor: pointer;
       margin-bottom: 3px;
-      .glyphicon {
+      .icon {
         margin-right: 3px;
-      }
-      a {
-        cursor: pointer;
       }
     }
     ul {
-      padding-left: 20px;
+      padding-left: 30px;
       list-style: none;
       font-size: 15px;
       font-weight: bold;

@@ -17,7 +17,7 @@
       <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
              ref="formElementEl"/>
       <a v-if="options.type==='file'&&options.path&&options.path[n-1]" :href="options.path[n-1]" target="_blank">{{(options.label?options.label:options.name)+(options.quantity?n:'')}}</a>
-      <img  v-else-if="options.type==='image'&&options.path&&options.path[n-1]" :class="'img-'+options.name"
+      <img v-else-if="options.type==='image'&&options.path&&options.path[n-1]" :class="'img-'+options.name"
            :src="options.path[n-1]"
            :title="(options.label?options.label:options.name)+(options.quantity?n:'')"/>
       <p v-if="options.validatedMsg&&options.validatedMsg[options.name+n]">{{options.validatedMsg[options.name+n]}}</p>
@@ -201,6 +201,8 @@
                 val.value = ''
                 val.files = null
               })
+            } else if (val.type === 'tree') {
+              this.treeValue = val.defaultLabel
             }
           }
         },

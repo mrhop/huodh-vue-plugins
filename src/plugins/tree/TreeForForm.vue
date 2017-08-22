@@ -24,6 +24,9 @@
       }
     },
     watch: {
+      treeData: function (val, oldVal) {
+        this.formatTreeData(val)
+      },
       treeDataLocal: function () {
         if (this.treeDataLocal) {
           if (lodash.isArray(this.treeDataLocal)) {
@@ -46,9 +49,9 @@
       }
     },
     methods: {
-      getTreeData: function () {
+      getTreeData: function (treeData) {
         var vm = this
-        axios.get(this.treeData)
+        axios.get(treeData)
           .then(function (response) {
             vm.treeDataLocal = response.data
           })
@@ -58,21 +61,24 @@
       },
       clickTransfer: function (args) {
         this.$emit('click', args)
+      },
+      formatTreeData (treeData) {
+        if (treeData) {
+          if (typeof treeData === 'string') {
+            this.getTreeData(treeData)
+          } else {
+            this.treeDataLocal = treeData
+          }
+        } else if (this.actions && this.actions.tree) {
+          this.treeDataLocal = this.actions.tree()
+        }
       }
     },
     components: {
       treeItemForForm
     },
     created: function () {
-      if (this.treeData) {
-        if (typeof this.treeData === 'string') {
-          this.getTreeData()
-        } else {
-          this.treeDataLocal = this.treeData
-        }
-      } else if (this.actions && this.actions.tree) {
-        this.treeDataLocal = this.actions.tree()
-      }
+      this.formatTreeData(this.treeData)
     }
   }
 </script>
