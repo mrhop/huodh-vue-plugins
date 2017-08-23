@@ -1,7 +1,7 @@
 <template>
   <li class="tree-item">
     <p>
-      <a v-if="iconClass" v-on:click="clickToggle" :class="iconClass"/>
+      <span v-if="iconClass" v-on:click="clickToggle" :class="iconClass"/>
       <router-link v-if="itemData.url" @click.native="treeClick" :to="itemData.url">{{itemData.title}}
       </router-link>
       <a v-else @click.prevent="treeClick">{{itemData.title}}</a>
@@ -53,8 +53,8 @@
   li.tree-item {
     > p {
       margin-bottom: 3px;
+      cursor: pointer;
       a {
-        cursor: pointer;
         display: inline-block;
       }
     }
