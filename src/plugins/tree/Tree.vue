@@ -226,7 +226,7 @@
     components: {
       treeItem, modalTpl, vform
     },
-    created: function () {
+    beforeMount () {
       if (this.treeData) {
         if (typeof this.treeData === 'string') {
           this.treeInit({id: this.id, initUrl: this.treeData})

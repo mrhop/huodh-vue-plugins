@@ -237,7 +237,8 @@
         deep: true
       }
     },
-    created () {
+    beforeMount () {
+      this.clearForm({'id': this.id})
       this.formInit({
         id: this.id,
         key: this.key,

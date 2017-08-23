@@ -50,7 +50,7 @@
 </template>
 <script>
   import lodash from 'lodash'
-  import { mapActions } from 'vuex'
+  import {mapActions} from 'vuex'
   import tableHeader from './TableHeader.vue'
   import tableBody from './TableBody.vue'
   import tableFooter from './TableFooter.vue'
@@ -102,7 +102,7 @@
       }
     },
     components: {tableHeader, tableBody, tableFooter},
-    props: ['id', 'keepAlive', 'actionUrls', 'actions', 'editable'],
+    props: ['id', 'keepAlive', 'actionUrls', 'actions', 'editable', 'reInit'],
     methods: lodash.assignIn({
       pageSizeChange (event) {
         let pager = {
@@ -143,7 +143,9 @@
       'tableRefreshList',
       'clearTable'
     ])),
-    created () {
+    beforeMount () {
+      console.log('before mount')
+      this.clearTable({'id': this.id})
       this.tableInit({
         id: this.id,
         listUrl: this.actionUrls && this.actionUrls.listUrl,
@@ -226,6 +228,7 @@
       .pagination {
         > li {
           > span, > a {
+            z-index: 0;
             border-color: #ccc;
             &:hover {
               color: #fff;
