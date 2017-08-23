@@ -5,7 +5,7 @@ import {utilfuns} from './state'
 export default{
   formItems: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)
-    return data.rules.items || state.default.rules.items
+    return data.rules.items
   },
   data: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)
@@ -13,7 +13,7 @@ export default{
   },
   formAction: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)
-    return data.rules.action || state.default.rules.action
+    return data.rules.action
   },
   formError: (state, getters) => (id) => {
     let data = utilfuns.getForm(id)

@@ -6,43 +6,43 @@ import lodash from 'lodash'
 export default{
   tableHeader: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.rules.header || state.default.rules.header
+    return data.rules.header
   },
   tableHeaderConst: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.rules.headerConst || state.default.rules.headerConst
+    return data.rules.headerConst
   },
   tableAction: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.rules.action || state.default.rules.action
+    return data.rules.action
   },
   tableFeature: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.rules.feature || state.default.rules.feature
+    return data.rules.feature
   },
   tableRows: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.rows || state.default.data.rows
+    return data.data.rows
   },
   tableTotalCount: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.totalCount || state.default.data.totalCount
+    return data.data.totalCount
   },
   tablePager: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.pager || state.default.data.pager
+    return data.data.pager
   },
   tablePageSize: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.pager.pageSize || state.default.data.pager.pageSize
+    return data.data.pager.pageSize
   },
   tableFilters: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.filters || state.default.data.filters
+    return data.data.filters
   },
   tableSorts: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)
-    return data.data.sorts || state.default.data.sorts
+    return data.data.sorts
   },
   tableHasSn: (state, getters) => (id) => {
     let data = utilfuns.getTable(id)

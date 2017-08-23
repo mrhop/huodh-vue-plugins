@@ -5,17 +5,7 @@ import lodash from 'lodash'
 import Vue from 'vue'
 const state = {
   dataArray: [],
-  dataArrayInit: [],
-  default: {
-    rules: {
-      items: [],
-      action: {}
-    },
-    error: '',
-    success: '',
-    data: {},
-    operation: 'getForm'
-  }
+  dataArrayInit: []
 }
 const types = {
   FORM_REQUEST: 'FORM_REQUEST',
@@ -94,7 +84,16 @@ const utilfuns = {
   getForm (id) {
     let data = state.dataArray.find(i => i.id === id)
     if (!data) {
-      data = lodash.assign({}, state.default)
+      data = {
+        rules: {
+          items: [],
+          action: {}
+        },
+        error: '',
+        success: '',
+        data: {},
+        operation: 'getForm'
+      }
       data.id = id
       state.dataArray.push(data)
     }
@@ -123,7 +122,17 @@ const utilfuns = {
     lodash.remove(state.dataArrayInit, function (item) {
       return item.id === id
     })
-    let dataLocal = lodash.assign({}, state.default, data, additionalParams)
+    let dataLocal = lodash.assign({}, {
+      rules: {
+        items: [],
+        action: {}
+      },
+      error: '',
+      success: '',
+      data: {},
+      operation: 'getForm'
+    }, additionalParams)
+    lodash.assign(dataLocal.rules, data.rules)
     let items = dataLocal.rules.items
     for (var key in items) {
       if (items[key].hidden === undefined || items[key].hidden === null) {

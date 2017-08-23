@@ -7,15 +7,16 @@
     </th>
     <!--<td v-for="(item,key) in row.value" :key="key" v-html="itemFormat(item,key)"></td>-->
     <tableTd v-for="(item,key) in row.value" :item="item" :key="key" :tdKey="key" :rowKey="row.key" :header="header"
-    :hasSn="hasSn"
-    :actions="actions" :editable="editable"></tableTd>
+             :hasSn="hasSn"
+             :actions="actions" :editable="editable"></tableTd>
     <td class="td-actions">
       <router-link v-if="action&&action.update" class="btn btn-info"
                    :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
       </router-link>
       <a v-if="action&&action.delete" class="btn btn-danger" v-on:click.prevent="deleteRow(row.key)">删除
       </a>
-      <router-link v-if="action&&action.others" class="btn btn-default" v-for="(item,key) in action.others" :key="key"
+      <router-link v-if="action&&action.others" class="btn btn-default" v-for="(item,key) in (action&&action.others||[])"
+                   :key="key"
                    :to="{path:actionUrls[item.key],query:{key:row.key}}">{{item.label}}
       </router-link>
     </td>

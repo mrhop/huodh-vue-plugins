@@ -5,27 +5,7 @@ import lodash from 'lodash'
 import Vue from 'vue'
 
 const state = {
-  dataArray: [],
-  default: {
-    rules: {
-      header: [],
-      headerConst: [],
-      action: {},
-      feature: {}
-    },
-    data: {
-      rows: [],
-      totalCount: 0,
-      pager: {
-        pageSize: 10,
-        currentPage: 1
-      },
-      filters: {},
-      sorts: {}
-    },
-    operation: 'getTable',
-    init: true
-  }
+  dataArray: []
 }
 const types = {
   TABLE_REQUEST: 'TABLE_REQUEST',
@@ -43,7 +23,26 @@ const utilfuns = {
   getTable (id) {
     let data = state.dataArray.find(i => i.id === id)
     if (!data) {
-      data = lodash.assign({}, state.default)
+      data = {
+        rules: {
+          header: [],
+          headerConst: [],
+          action: {},
+          feature: {}
+        },
+        data: {
+          rows: [],
+          totalCount: 0,
+          pager: {
+            pageSize: 10,
+            currentPage: 1
+          },
+          filters: {},
+          sorts: {}
+        },
+        operation: 'getTable',
+        init: true
+      }
       data.id = id
       state.dataArray.push(data)
     }
@@ -52,11 +51,32 @@ const utilfuns = {
   setTable (id, data, additionalParams) {
     let dataLocal = state.dataArray.find(i => i.id === id)
     if (!dataLocal) {
-      dataLocal = lodash.assign({}, state.default, data, additionalParams)
+      dataLocal = lodash.assign({}, {
+        rules: {
+          header: [],
+          headerConst: [],
+          action: {},
+          feature: {}
+        },
+        data: {
+          rows: [],
+          totalCount: 0,
+          pager: {
+            pageSize: 10,
+            currentPage: 1
+          },
+          filters: {},
+          sorts: {}
+        },
+        operation: 'getTable',
+        init: true
+      }, data, additionalParams)
       dataLocal.id = id
       state.dataArray.push(dataLocal)
     } else {
-      lodash.assign(dataLocal, data, additionalParams)
+      lodash.assign(dataLocal.rules, data.rules)
+      lodash.assign(dataLocal.data, data.data)
+      lodash.assign(dataLocal, additionalParams)
     }
     return dataLocal
   },
