@@ -14,7 +14,7 @@
   import lodash from 'lodash'
   import treeItemForForm from './TreeItemForForm.vue'
   export default {
-    name: 'tree',
+    name: 'tree-form',
     data () {
       return {
         id: new Date().getTime() + Math.ceil(Math.random() * 100000),
