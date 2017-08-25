@@ -1,11 +1,11 @@
 <template>
   <div class="tree-wrapper" v-if="treeDataLocal">
     <ul v-if="isArray">
-      <treeItemForCheckbox v-on:click="clickTransfer" :checkBoxName="checkBoxName" :selectedValue="selectedValue"
+      <treeItemForCheckbox v-on:click="clickTransfer" :name="name" :selectedValue="selectedValue"
                            v-for="item in treeDataLocal" :itemData="item" :key="item.id"/>
     </ul>
     <ul v-else-if="treeDataLocal.title">
-      <treeItemForCheckbox v-on:click="clickTransfer" :checkBoxName="checkBoxName" :selectedValue="selectedValue"
+      <treeItemForCheckbox v-on:click="clickTransfer" :name="name" :selectedValue="selectedValue"
                            :itemData="treeDataLocal"/>
     </ul>
   </div>
@@ -52,7 +52,7 @@
           return {}
         }
       },
-      checkBoxName: undefined,
+      name: undefined,
       selectedValue: undefined
     },
     methods: {

@@ -1,13 +1,14 @@
 <template>
   <li class="tree-item">
     <p>
-      <input type="checkbox" :name="checkBoxName" :value="itemData.id" v-model="selectedValue.selected"
+      <input :id="'tree-item-'+name+'-'+itemData.id" type="checkbox" :name="name" :value="itemData.id"
+             v-model="selectedValue.selected"
              @click="treeClick">
       <span v-if="iconClass" v-on:click="clickToggle" :class="iconClass"/>
-      <span>{{itemData.title}}</span>
+      <label :for="'tree-item-'+name+'-'+itemData.id">{{itemData.title}}</label>
     </p>
     <ul v-if="itemData.children" v-show="showChildren">
-      <treeItem v-for="item in itemData.children" :itemData="item" :checkBoxName="checkBoxName"
+      <treeItem v-for="item in itemData.children" :itemData="item" :name="name"
                 :selectedValue="selectedValue" v-on:click="clickTransfer" :key="item.id"/>
     </ul>
   </li>
@@ -24,7 +25,7 @@
     created: function () {
       this.initTreeItem()
     },
-    props: ['itemData', 'checkBoxName', 'selectedValue'],
+    props: ['itemData', 'name', 'selectedValue'],
     methods: {
       initTreeItem () {
         if (this.itemData.children) {
@@ -40,13 +41,8 @@
         }
       },
       treeClick (event) {
-        if (event.target.checked) {
-          this.$emit('click', true)
-          this.recursiveChildren(this.itemData, true)
-        } else {
-          this.$emit('click', false)
-          this.recursiveChildren(this.itemData, false)
-        }
+        this.recursiveChildren(this.itemData, event.target.checked)
+        this.$emit('click', event.target.checked)
       },
       recursiveChildren (itemData, flag) {
         if (itemData.children) {
@@ -78,20 +74,25 @@
         return flag
       },
       clickTransfer: function (args) {
-        if (args) {
-          if (this.selectedValue.selected.indexOf(this.itemData.id) < 0) {
-            this.selectedValue.selected.push(this.itemData.id)
-            this.itemData.refresh = !this.itemData.refresh
-            this.$emit('click', args)
-          }
-        } else {
-          if (!this.judgeChildren(this.itemData)) {
-            let index = this.selectedValue.selected.indexOf(this.itemData.id)
-            this.selectedValue.selected.splice(index, 1)
-            this.itemData.refresh = !this.itemData.refresh
-            this.$emit('click', args)
+        if (args !== undefined) {
+          if (args) {
+            if (this.selectedValue.selected.indexOf(this.itemData.id) < 0) {
+              this.selectedValue.selected.push(this.itemData.id)
+              this.itemData.refresh = !this.itemData.refresh
+              this.$emit('click', args)
+              return
+            }
+          } else {
+            if (!this.judgeChildren(this.itemData)) {
+              let index = this.selectedValue.selected.indexOf(this.itemData.id)
+              this.selectedValue.selected.splice(index, 1)
+              this.itemData.refresh = !this.itemData.refresh
+              this.$emit('click', args)
+              return
+            }
           }
         }
+        this.$emit('click')
       }
     },
     watch: {
