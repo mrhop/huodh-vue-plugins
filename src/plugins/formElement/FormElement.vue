@@ -20,7 +20,8 @@
       <img v-else-if="options.type==='image'&&options.path&&options.path[n-1]" :class="'img-'+options.name"
            :src="options.path[n-1]"
            :title="(options.label?options.label:options.name)+(options.quantity?n:'')"/>
-      <p v-if="options.validatedMsg&&options.validatedMsg[options.name+n]">{{options.validatedMsg[options.name+n]}}</p>
+      <p class="error" v-if="options.validatedMsg&&options.validatedMsg[options.name+n]">
+        {{options.validatedMsg[options.name+n]}}</p>
     </div>
     <input
       v-else-if="options.type==='password'"
@@ -89,8 +90,14 @@
         <treeForForm v-show="showTree" :treeData="options.treeData" v-on:click="dealWithTree"/>
       </transition>
     </div>
-    <p v-if="options.validatedMsg&&options.type!=='file'&&options.type!=='image'">{{options.validatedMsg}}</p>
-    <p v-if="(options.type==='file'||options.type==='image')&&options.validatedMsg&&options.validatedMsg[options.name]">
+    <div class="tree-checkbox-block" v-else-if="options.type==='tree-checkbox'">
+      <treeForCheckbox :treeData="options.treeData" :selectedValue="{selected: this.options.defaultValue}"
+                       :name="options.name" v-on:click="dealWithTreeCheckbox"/>
+    </div>
+    <p class="error" v-if="options.validatedMsg&&options.type!=='file'&&options.type!=='image'">
+      {{options.validatedMsg}}</p>
+    <p class="error"
+       v-if="(options.type==='file'||options.type==='image')&&options.validatedMsg&&options.validatedMsg[options.name]">
       {{options.validatedMsg[options.name]}}</p>
   </div>
 </template>
@@ -99,6 +106,7 @@
   import {utilfuns} from '../vform/store/state'
   import datePicker from '../datePicker/DatePicker.vue'
   import treeForForm from '../tree/TreeForForm.vue'
+  import treeForCheckbox from '../tree/TreeForCheckbox.vue'
   export default {
     name: 'form-element',
     data () {
@@ -171,7 +179,6 @@
         this.showTree = !this.showTree
       },
       dealWithTree (data) {
-        console.log('deal with tree')
         const {value, label} = data || {}
         if (value) {
           this.treeValue = label
@@ -181,6 +188,10 @@
           this.elementValue = undefined
         }
         this.showTree = false
+      },
+      dealWithTreeCheckbox (data) {
+        this.elementValue = data
+//        this.dealWithData()
       },
       close (e) {
         if (!this.$el.contains(e.target)) {
@@ -216,7 +227,7 @@
         }
       })
     },
-    components: {datePicker, treeForForm}
+    components: {datePicker, treeForForm, treeForCheckbox}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -224,7 +235,7 @@
 
   .form-element {
     &.has-error {
-      p {
+      p.error {
         margin: 0;
         font-size: 0.8em;
         color: $brand-danger;
@@ -277,6 +288,17 @@
           color: #6ac1c9;
           &:hover {
             color: #0097a7;
+          }
+        }
+      }
+    }
+    .tree-checkbox-block {
+      .tree-wrapper {
+        padding-top: 8px;
+        > ul {
+          padding-left: 0;
+          ul {
+            padding-left: 20px;
           }
         }
       }

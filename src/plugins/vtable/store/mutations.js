@@ -20,6 +20,9 @@ export default {
               items[key].defaultValue = items[key].defaultValue || undefined
               items[key].defaultLabel = items[key].defaultLabel || undefined
               items[key].treeData = items[key].treeData || undefined
+            } else if (items[key].type === 'tree-checkbox') {
+              items[key].defaultValue = items[key].defaultValue || []
+              items[key].treeData = items[key].treeData || undefined
             } else {
               if (items[key].type === 'checkbox') {
                 if (!items[key].items) {

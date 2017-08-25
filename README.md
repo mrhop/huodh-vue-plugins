@@ -1,3 +1,11 @@
+package.json 相关的配置修改
+
+//  "scripts": {
+//    "build": "node  build/clear.js && node build/build.js && node build/build.js umd"
+//  },
+
+
+
 creat some vue plugins
 ["table",
  "form",
