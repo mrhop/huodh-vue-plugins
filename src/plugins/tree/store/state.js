@@ -17,6 +17,9 @@ const types = {
 }
 const utilfuns = {
   initTree (id, data) {
+    lodash.remove(state.dataArray, function (i) {
+      return i.id === id
+    })
     let dataLocal = {}
     dataLocal.id = id
     dataLocal.data = data

@@ -158,6 +158,9 @@
           this.deleteErrorTrigger = !this.deleteErrorTrigger
         }
         this.removeTreeError({id: this.id})
+      },
+      treeData: function (val, oldVal) {
+        this.formatTreeData(val)
       }
     },
     props: {
@@ -214,6 +217,17 @@
       },
       clickTransfer: function (args) {
         this.$emit('click', args)
+      },
+      formatTreeData (treeData) {
+        if (treeData) {
+          if (typeof treeData === 'string') {
+            this.treeInit({id: this.id, initUrl: treeData})
+          } else {
+            this.treeInit({id: this.id, treeData: treeData})
+          }
+        } else {
+          this.treeDelete({id: this.id})
+        }
       }
     }, mapActions([
       'treeInit',
@@ -228,11 +242,7 @@
     },
     beforeMount () {
       if (this.treeData) {
-        if (typeof this.treeData === 'string') {
-          this.treeInit({id: this.id, initUrl: this.treeData})
-        } else {
-          this.treeInit({id: this.id, treeData: this.treeData})
-        }
+        this.formatTreeData(this.treeData)
       } else if (this.actions && this.actions.tree) {
         var treeData = this.actions.tree()
         this.treeInit({id: this.id, treeData})

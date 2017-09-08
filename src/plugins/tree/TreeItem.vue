@@ -1,12 +1,10 @@
 <template>
   <li class="tree-item">
-    <p @mouseenter="showEditable = true" @click.prevent="treeClick" @mouseleave="showEditable = false">
-      <span v-if="iconClass" :class="iconClass"/>
-      <router-link v-if="itemData.url" :to="itemData.url">
-        <span class="item-text">{{itemData.title}}</span>
+    <p @mouseenter="showEditable = true" @mouseleave="showEditable = false">
+      <span v-if="iconClass" :class="iconClass" @click.prevent="clickToggle"/>
+      <router-link v-if="itemData.url" @click.native="treeClick" :to="itemData.url"><span class="item-text">{{itemData.title}}</span>
       </router-link>
-      <a v-else>
-        <span class="item-text">{{itemData.title}}</span></a>
+      <a v-else @click.prevent="treeClick"><span class="item-text">{{itemData.title}}</span></a>
       <transition name="fade">
         <span v-if="editable" class="editable-span" v-show="showEditable"><a
           v-if="actionUrls&&actionUrls.addUrl||actions&&actions.add"
@@ -63,7 +61,9 @@
         }
       },
       treeClick () {
-        this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
+        if (this.itemData.emitClick !== false) {
+          this.$emit('click', this.itemData.emitClickArgs ? this.itemData.emitClickArgs : null)
+        }
         this.clickToggle()
       },
       clickTransfer: function (args) {
