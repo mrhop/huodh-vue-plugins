@@ -244,6 +244,7 @@
         border-color: #a94442;
       }
       div.file-block {
+        margin-bottom: 5px;
         .form-control {
           border: 1px solid #ccc;
         }
