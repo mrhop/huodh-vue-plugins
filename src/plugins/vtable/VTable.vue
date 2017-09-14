@@ -182,8 +182,9 @@
       },
       actions: {
         handler: function (val, oldVal) {
-          if (val.list && val.list !== oldVal.list) {
+          if ((val.list && val.list !== oldVal.list) || (val.reinit)) {
             console.log('do init')
+            val.reinit = false
             this.tableInit({
               id: this.id,
               listUrl: this.actionUrls && this.actionUrls.listUrl,

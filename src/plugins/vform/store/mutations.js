@@ -45,6 +45,7 @@ export default {
     console.log('到达error这里')
     if (items) {
       utilfuns.getForm(id).rules.items = items
+      utilfuns.getForm(id).error = true
     } else if (error) {
       // 应该给出一个modal的提示，做出网络或者其他的错误提示
       utilfuns.getForm(id).error = error

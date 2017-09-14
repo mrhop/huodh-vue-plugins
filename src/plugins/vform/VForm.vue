@@ -31,7 +31,10 @@
       <!-- 此处是底部的actions -->
       <div class="form-group actions" v-if="action&&action.save">
         <div class="col-sm-offset-2 col-sm-10">
-          <button type="submit" v-if="action.save" class="btn btn-primary"
+          <button type="submit" v-if="action.save&&saveButtonDisabled" disabled class="btn btn-primary"
+                  v-on:click.prevent="saveForm">{{action.save.label}}
+          </button>
+          <button type="submit" v-if="action.save&&!saveButtonDisabled" class="btn btn-primary"
                   v-on:click.prevent="saveForm">{{action.save.label}}
           </button>
           <button type="reset" v-if="action.reset" class="btn btn-default"
@@ -71,6 +74,11 @@
       header: 'Form Success',
       showFooter: true
     },
+    data () {
+      return {
+        saveButtonDisabled: false
+      }
+    },
     computed: {
       items () {
         return this.$store.getters.formItems(this.id)
@@ -79,7 +87,14 @@
         return this.$store.getters.formAction(this.id)
       },
       key () {
-        return this.$route && this.$route.query && this.$route.query.key
+        if (this.$route) {
+          if (this.$route.query && this.$route.query.key) {
+            return this.$route.query.key
+          } else if (this.$route && this.$route.params && this.$route.params.key) {
+            return this.$route.params.key
+          }
+        }
+        return null
       },
       error () {
         return this.$store.getters.formError(this.id)
@@ -125,6 +140,7 @@
         })
       },
       saveForm () {
+        this.saveButtonDisabled = true
         if (this.actionUrls && this.actionUrls.saveUrl || this.actions && this.actions.save) {
           this.formSave({
             id: this.id,
@@ -164,16 +180,20 @@
     ])),
     watch: {
       error: function () {
+        this.saveButtonDisabled = false
         if (this.error) {
           if (this.error.title) {
             this.$options.errorModalData.header = this.error.title
+            if (this.error.message) {
+              this.$options.errorModalData.content = this.error.message
+            }
+            this.$Vue.createModal({modalData: this.$options.errorModalData})
           }
-          this.$options.errorModalData.content = this.error.message
-          this.$Vue.createModal({modalData: this.$options.errorModalData})
           this.removeFormError({id: this.id})
         }
       },
       success: function () {
+        this.saveButtonDisabled = false
         let data = this.$store.getters.data(this.id)
         if (this.success) {
           if (typeof this.success === 'object') {
@@ -210,7 +230,8 @@
       },
       actions: {
         handler: function (val, oldVal) {
-          if (val.init && val.init !== oldVal.init) {
+          if ((val.init && val.init !== oldVal.init) || (val.reinit)) {
+            val.reinit = false
             console.log('do reinit')
             this.formInit({
               id: this.id,

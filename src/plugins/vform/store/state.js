@@ -40,7 +40,18 @@ const validateInternal = function (itemData, validateRules, type, item) {
     }
   }
   tmpData = tmpData || ''
-  if (item.required !== false || !lodash.isEmpty(itemData)) {
+  let isEmpty = true
+  if (type !== 'file' && type !== 'image') {
+    isEmpty = lodash.isEmpty(itemData)
+  } else {
+    for (let key in tmpData) {
+      if (tmpData[key]) {
+        isEmpty = false
+        break
+      }
+    }
+  }
+  if (item.required !== false || !isEmpty) {
     if (type !== 'file' && type !== 'image') {
       for (var index in validateRules) {
         let validateRule = validateRules[index]
@@ -63,7 +74,7 @@ const validateInternal = function (itemData, validateRules, type, item) {
           }
         }
       }
-      if (lodash.isEmpty(itemData)) {
+      if (isEmpty) {
         errorFileMsg[item.name] = '不能为空'
         return errorFileMsg
       }
@@ -147,6 +158,9 @@ const utilfuns = {
       }
       if (items[key].type === 'file' || items[key].type === 'image') {
         items[key].defaultValue = {}
+        for (var i = 1; i <= (items[key].quantity || 1); i++) {
+          items[key].defaultValue[items[key].name + i] = null
+        }
       } else if (items[key].type === 'tree') {
         items[key].defaultValue = items[key].defaultValue || undefined
         items[key].defaultLabel = items[key].defaultLabel || undefined

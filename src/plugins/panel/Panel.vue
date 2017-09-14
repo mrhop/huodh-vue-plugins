@@ -1,12 +1,14 @@
 <template>
   <div :class="['panel-total col',panelWrapperClass]">
     <div class="panel-wrapper">
-      <header>
+      <header @click="headerClick">
         <slot name="header"></slot>
       </header>
-      <main>
-        <slot></slot>
-      </main>
+      <transition name="fade">
+        <main v-show="bodyOpened">
+          <slot></slot>
+        </main>
+      </transition>
       <footer>
         <slot name="footer"></slot>
       </footer>
@@ -18,11 +20,18 @@
     name: 'v-panel',
     data () {
       return {
-        panelWrapperClass: 'col-sm-' + (this.col ? this.col : 12)
+        panelWrapperClass: 'col-sm-' + (this.col ? this.col : 12),
+        bodyOpened: true
       }
     },
-    props: ['col'],
-    methods: {}
+    props: ['col', 'canHide'],
+    methods: {
+      headerClick () {
+        if (this.canHide) {
+          this.bodyOpened = !this.bodyOpened
+        }
+      }
+    }
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">
@@ -49,6 +58,17 @@
       > footer {
         text-align: right;
       }
+    }
+    .fade-enter-active, .fade-leave-active {
+      transition: all .3s;
+    }
+
+    .fade-enter-active, .fade-leave {
+      opacity: 1;
+    }
+
+    .fade-enter, .fade-leave-active {
+      opacity: 0;
     }
   }
 </style>

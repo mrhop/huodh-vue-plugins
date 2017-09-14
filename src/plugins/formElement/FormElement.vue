@@ -14,7 +14,8 @@
       :value="elementValue" ref="formElementEl" @click="buttonClick"/>
     <div :class="['file-block',options.validatedMsg&&options.validatedMsg[options.name+n]?'file-error':'']"
          v-else-if="options.type==='file'||options.type==='image'" v-for="n in (options.quantity||1)">
-      <input type="file" class="form-control" v-on:change="fileChange" :name="options.name" :data-index="options.name+n"
+      <input v-if="!options.locked" type="file" class="form-control" v-on:change="fileChange" :name="options.name"
+             :data-index="options.name+n"
              ref="formElementEl"/>
       <a v-if="options.type==='file'&&options.path&&options.path[n-1]" :href="options.path[n-1]" target="_blank">{{(options.label?options.label:options.name)+(options.quantity?n:'')}}</a>
       <img v-else-if="options.type==='image'&&options.path&&options.path[n-1]" :class="'img-'+options.name"
@@ -170,7 +171,7 @@
         if (event.target.files.length > 0) {
           this.elementValue[event.target.getAttribute('data-index')] = event.target.files
         } else {
-          delete this.elementValue[event.target.getAttribute('data-index')]
+          this.elementValue[event.target.getAttribute('data-index')] = null
         }
         this.dealWithData()
       },

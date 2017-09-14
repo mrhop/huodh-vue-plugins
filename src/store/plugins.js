@@ -27,7 +27,7 @@ const defaultCallPlugin = store => {
               continue
             }
             var obj = data[key]
-            if (obj && typeof obj === 'object') {
+            if (obj && !Array.isArray(obj) && typeof obj === 'object') {
               for (var subKey in obj) {
                 if (obj[subKey] && typeof obj[subKey] === 'object') {
                   var files = obj[subKey]
@@ -38,7 +38,7 @@ const defaultCallPlugin = store => {
                     }
                   }
                 } else {
-                  formData.append(key, obj[subKey])
+                  formData.append(key, new File([], 'null file'))
                 }
               }
             } else {
