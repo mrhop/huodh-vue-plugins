@@ -2,7 +2,7 @@
   <div class="form-wrapper">
     <div class="actions" v-if="action&&action.backup">
       <div class="backup-action">
-        <router-link class="btn btn-primary" :to="actionUrls.backupUrl">{{action.backup.label}}</router-link>
+        <router-link v-if="actionUrls.backupUrl" class="btn btn-primary" :to="actionUrls.backupUrl">{{action.backup.label}}</router-link>
       </div>
     </div>
     <form class="form-horizontal" :id="'vform-'+id" method="post" :action="actionUrls&&actionUrls.directSaveUrl">

@@ -74,6 +74,8 @@
     <textarea v-else-if="options.type==='textarea'" class="form-control" :name="options.name"
               :rows="options.rows?options.rows:3" v-model="elementValue" ref="formElementEl"
               :placeholder="options.placeholder" :readonly="options.locked"/>
+    <ckeditor v-else-if="options.type==='ckeditor'" :options="options"
+              v-on:inputChange="dealWithCKeditor"/>
     <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
     <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked"
@@ -106,6 +108,7 @@
   import Vue from 'vue'
   import {utilfuns} from '../vform/store/state'
   import datePicker from '../datePicker/DatePicker.vue'
+  import ckeditor from '../ckeditor/CKeditor.vue'
   import treeForForm from '../tree/TreeForForm.vue'
   import treeForCheckbox from '../tree/TreeForCheckbox.vue'
   export default {
@@ -156,6 +159,9 @@
         } else {
           this.elementValue = undefined
         }
+      },
+      dealWithCKeditor (element, data) {
+        this.elementValue = data
       },
       clearSelect () {
         this.elementValue = undefined
@@ -228,7 +234,7 @@
         }
       })
     },
-    components: {datePicker, treeForForm, treeForCheckbox}
+    components: {datePicker, treeForForm, treeForCheckbox, ckeditor}
   }
 </script>
 <style rel="stylesheet/scss" lang="scss">

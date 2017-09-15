@@ -242,7 +242,8 @@ const utilfuns = {
         if (item.type === 'file' || item.type === 'image') {
           multipart = true
         }
-        if (!item.locked && !item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file' || item.type === 'image')) {
+        // locked 也需要校验!item.locked &&
+        if (!item.hidden && (item.validate && item.validate.length > 0 || item.type === 'file' || item.type === 'image')) {
           let validatedMsg = validateInternal(item.defaultValue, item.validate, item.type, item)
           if (validatedMsg) {
             Vue.set(item, 'validatedMsg', validatedMsg)
