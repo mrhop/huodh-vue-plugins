@@ -91,6 +91,92 @@ const validateInternal = function (itemData, validateRules, type, item) {
     }
   }
 }
+const setDefaultValues = function (items, tempForm) {
+  for (var key in items) {
+    if (items[key].hidden === undefined || items[key].hidden === null) {
+      items[key].hidden = false
+    }
+    if (items[key].locked === undefined || items[key].locked === null) {
+      items[key].locked = false
+    }
+    items[key].validatedMsg = undefined
+    if (!items[key].hidden && tempForm && tempForm.length > 0 && tempForm[0].rules.items.length > 0) {
+      items[key].init = true
+    }
+    if (items[key].type === 'file' || items[key].type === 'image') {
+      items[key].defaultValue = {}
+      for (var i = 1; i <= (items[key].quantity || 1); i++) {
+        items[key].defaultValue[items[key].name + i] = null
+      }
+    } else if (items[key].type === 'tree') {
+      items[key].defaultValue = items[key].defaultValue || undefined
+      items[key].defaultLabel = items[key].defaultLabel || undefined
+      items[key].treeData = items[key].treeData || undefined
+    } else if (items[key].type === 'tree-checkbox') {
+      items[key].defaultValue = items[key].defaultValue || []
+      items[key].treeData = items[key].treeData || undefined
+    } else {
+      if (items[key].type === 'checkbox') {
+        if (!items[key].items) {
+          items[key].items = []
+        }
+        if (!items[key].defaultValue) {
+          items[key].defaultValue = []
+        }
+      } else if (items[key].type === 'select' || items[key].type === 'radio') {
+        if (!items[key].items) {
+          items[key].items = []
+        }
+        if (!items[key].defaultValue) {
+          items[key].defaultValue = undefined
+        }
+      } else if (items[key].defaultValue === undefined || items[key].defaultValue === null) {
+        items[key].defaultValue = undefined
+      }
+    }
+  }
+}
+const setDefaultValue = function (item) {
+  if (item.hidden === undefined || item.hidden === null) {
+    item.hidden = false
+  }
+  if (item.locked === undefined || item.locked === null) {
+    item.locked = false
+  }
+  item.validatedMsg = undefined
+  item.init = true
+  if (item.type === 'file' || item.type === 'image') {
+    item.defaultValue = {}
+    for (var i = 1; i <= (item.quantity || 1); i++) {
+      item.defaultValue[item.name + i] = null
+    }
+  } else if (item.type === 'tree') {
+    item.defaultValue = item.defaultValue || undefined
+    item.defaultLabel = item.defaultLabel || undefined
+    item.treeData = item.treeData || undefined
+  } else if (item.type === 'tree-checkbox') {
+    item.defaultValue = item.defaultValue || []
+    item.treeData = item.treeData || undefined
+  } else {
+    if (item.type === 'checkbox') {
+      if (!item.items) {
+        item.items = []
+      }
+      if (!item.defaultValue) {
+        item.defaultValue = []
+      }
+    } else if (item.type === 'select' || item.type === 'radio') {
+      if (!item.items) {
+        item.items = []
+      }
+      if (!item.defaultValue) {
+        item.defaultValue = undefined
+      }
+    } else if (item.defaultValue === undefined || item.defaultValue === null) {
+      item.defaultValue = undefined
+    }
+  }
+}
 const utilfuns = {
   getForm (id) {
     let data = state.dataArray.find(i => i.id === id)
@@ -145,49 +231,7 @@ const utilfuns = {
     }, additionalParams)
     lodash.assign(dataLocal.rules, data.rules)
     let items = dataLocal.rules.items
-    for (var key in items) {
-      if (items[key].hidden === undefined || items[key].hidden === null) {
-        items[key].hidden = false
-      }
-      if (items[key].locked === undefined || items[key].locked === null) {
-        items[key].locked = false
-      }
-      items[key].validatedMsg = undefined
-      if (!items[key].hidden && tempForm && tempForm.length > 0 && tempForm[0].rules.items.length > 0) {
-        items[key].init = true
-      }
-      if (items[key].type === 'file' || items[key].type === 'image') {
-        items[key].defaultValue = {}
-        for (var i = 1; i <= (items[key].quantity || 1); i++) {
-          items[key].defaultValue[items[key].name + i] = null
-        }
-      } else if (items[key].type === 'tree') {
-        items[key].defaultValue = items[key].defaultValue || undefined
-        items[key].defaultLabel = items[key].defaultLabel || undefined
-        items[key].treeData = items[key].treeData || undefined
-      } else if (items[key].type === 'tree-checkbox') {
-        items[key].defaultValue = items[key].defaultValue || []
-        items[key].treeData = items[key].treeData || undefined
-      } else {
-        if (items[key].type === 'checkbox') {
-          if (!items[key].items) {
-            items[key].items = []
-          }
-          if (!items[key].defaultValue) {
-            items[key].defaultValue = []
-          }
-        } else if (items[key].type === 'select' || items[key].type === 'radio') {
-          if (!items[key].items) {
-            items[key].items = []
-          }
-          if (!items[key].defaultValue) {
-            items[key].defaultValue = undefined
-          }
-        } else if (items[key].defaultValue === undefined || items[key].defaultValue === null) {
-          items[key].defaultValue = undefined
-        }
-      }
-    }
+    setDefaultValues(items, tempForm)
     dataLocal.id = id
     state.dataArray.push(lodash.cloneDeep(dataLocal))
     state.dataArrayInit.push(lodash.cloneDeep(dataLocal))
@@ -282,6 +326,8 @@ const utilfuns = {
 }
 export {
   state as default,
+  setDefaultValues,
+  setDefaultValue,
   types,
   utilfuns
 }

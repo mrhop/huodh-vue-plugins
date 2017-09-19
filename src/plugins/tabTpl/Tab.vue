@@ -11,36 +11,45 @@
 <script>
   export default {
     name: 'v-tab',
+    data () {
+      return {
+        defaultSelected: this.tabSelected + ''
+      }
+    },
     methods: {
       headerClick (i, event) {
+        this.defaultSelected = i
         let headerItems = this.$refs.tabWrapper.querySelectorAll('.tab-header > ul >li')
+        let bodyItems = this.$refs.tabWrapper.querySelectorAll('.tab-body > ul > li')
         for (let j in headerItems) {
           if (j < headerItems.length) {
+            j = +j
             if (j !== i) {
               headerItems[j].removeAttribute('class')
+              bodyItems[j].removeAttribute('class')
             } else {
               headerItems[j].setAttribute('class', 'active')
-            }
-          }
-        }
-        let bodyItems = this.$refs.tabWrapper.querySelectorAll('.tab-body > ul > li')
-        for (let k in bodyItems) {
-          if (k < bodyItems.length) {
-            if (k !== i) {
-              bodyItems[k].removeAttribute('class')
-            } else {
-              bodyItems[k].setAttribute('class', 'active')
+              bodyItems[j].setAttribute('class', 'active')
             }
           }
         }
         this.$emit('headerClick', i, event)
       }
     },
+    props: ['tabSelected'],
     mounted () {
+      this.headerClick(this.tabSelected)
       let headerItems = this.$refs.tabWrapper.querySelectorAll('.tab-header > ul >li')
       for (let i in headerItems) {
         if (i < headerItems.length) {
-          headerItems[i].addEventListener('click', this.headerClick.bind(this, i))
+          headerItems[i].addEventListener('click', this.headerClick.bind(this, +i))
+        }
+      }
+    },
+    watch: {
+      tabSelected: function (val) {
+        if (this.defaultSelected !== val) {
+          this.headerClick(val)
         }
       }
     }

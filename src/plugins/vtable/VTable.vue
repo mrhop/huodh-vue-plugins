@@ -11,8 +11,12 @@
           <option value="30" :selected="pageSize===30">30</option>
         </select>
       </div>
-      <div class="add-item" v-if="action&&action.add&&actionUrls.addUrl">
-        <router-link class="btn btn-primary" :to="actionUrls.addUrl">添加记录</router-link>
+      <div class="add-item" v-if="action&&action.add&&(actionUrls&&actionUrls.addUrl||actions&&actions.addAction)">
+        <router-link class="btn btn-primary" v-if="actionUrls&&actionUrls.addUrl" :to="actionUrls.addUrl">添加记录
+        </router-link>
+        <a class="btn btn-primary" v-if="actions&&actions.addAction"
+           @click.prevent="addRedirectAction">添加记录
+        </a>
       </div>
     </div>
     <div class="table-responsive">
@@ -136,6 +140,9 @@
           filters,
           sorts
         })
+      },
+      addRedirectAction () {
+        this.actions && this.actions.addAction()
       }
     }, mapActions([
       'tableInit',

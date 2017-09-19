@@ -43,7 +43,7 @@
         id: 'ckeditor-' + (this.options.id || new Date().getTime())
       }
     },
-    props: ['options', 'value'],
+    props: ['options'],
     /* eslint-disable no-undef */
     mounted () {
       if (this.options.filebrowserBrowseUrl) {
@@ -71,7 +71,7 @@
       }.bind(this))
     },
     updated () {
-      CKEDITOR.instances[this.id].setData(this.value)
+      CKEDITOR.instances[this.id].setData(this.options.defaultValue)
     },
     beforeDestroy () {
       CKEDITOR.instances[this.id].destroy()

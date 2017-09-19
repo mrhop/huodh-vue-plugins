@@ -6,16 +6,22 @@
       <span v-else>{{rowNum}}</span>
     </th>
     <!--<td v-for="(item,key) in row.value" :key="key" v-html="itemFormat(item,key)"></td>-->
-    <tableTd v-for="(item,key) in row.value" :item="item" :key="key" :tdKey="key" :rowKey="row.key" :header="header"
+    <tableTd v-for="(item,key) in row.value" v-if="hasSn?key<(header.length-1):key<header.length" :item="item"
+             :key="key"
+             :tdKey="key"
+             :rowKey="row.key" :header="header"
              :hasSn="hasSn"
              :actions="actions" :editable="editable"></tableTd>
     <td class="td-actions">
-      <router-link v-if="action&&action.update" class="btn btn-info"
+      <router-link v-if="action&&action.update&&actionUrls&&actionUrls.infoUrl" class="btn btn-info"
                    :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
       </router-link>
+      <a class="btn btn-primary" v-if="action&&action.update&&actions&&actions.updateAction"
+         @click.prevent="updateRow(row.key)">更新</a>
       <a v-if="action&&action.delete" class="btn btn-danger" v-on:click.prevent="deleteRow(row.key)">删除
       </a>
-      <router-link v-if="action&&action.others" class="btn btn-default" v-for="(item,key) in (action&&action.others||[])"
+      <router-link v-if="action&&action.others" class="btn btn-default"
+                   v-for="(item,key) in (action&&action.others||[])"
                    :key="key"
                    :to="{path:actionUrls[item.key],query:{key:row.key}}">{{item.label}}
       </router-link>
@@ -45,6 +51,10 @@
     methods: lodash.assignIn({
       getRowNum () {
         return this.index + 1
+      },
+      updateRow (key, event) {
+        // 首先给出确认modal，然后进行del的fun调用操作,开始modal的处理了,尝试使用下filter处理item的值
+        this.actions.updateAction({key})
       },
       deleteRow (key, event) {
         // 首先给出确认modal，然后进行del的fun调用操作,开始modal的处理了,尝试使用下filter处理item的值

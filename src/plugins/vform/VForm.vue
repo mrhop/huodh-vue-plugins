@@ -2,7 +2,9 @@
   <div class="form-wrapper">
     <div class="actions" v-if="action&&action.backup">
       <div class="backup-action">
-        <router-link v-if="actionUrls.backupUrl" class="btn btn-primary" :to="actionUrls.backupUrl">{{action.backup.label}}</router-link>
+        <router-link v-if="actionUrls.backupUrl" class="btn btn-primary" :to="actionUrls.backupUrl">
+          {{action.backup.label}}
+        </router-link>
       </div>
     </div>
     <form class="form-horizontal" :id="'vform-'+id" method="post" :action="actionUrls&&actionUrls.directSaveUrl">
@@ -58,8 +60,10 @@
   </div>
 </template>
 <script>
+  import Vue from 'vue'
   import lodash from 'lodash'
   import {mapActions} from 'vuex'
+  import {setDefaultValue} from './store/state'
   import formElement from '../formElement/FormElement.vue'
 
   export default {
@@ -118,6 +122,11 @@
         }
       },
       formRule: {
+        default: function () {
+          return {}
+        }
+      },
+      updateRule: {
         default: function () {
           return {}
         }
@@ -254,6 +263,21 @@
             initAction: this.actions && this.actions.init,
             formRule: this.formRule
           })
+        },
+        deep: true
+      },
+      updateRule: {
+        handler: function (val, oldVal) {
+          for (let index in this.items) {
+            if (index < this.items.length) {
+              if (val.hasOwnProperty(this.items[index].name)) {
+                // 不能设置为null
+                setDefaultValue(this.items[index])
+                Vue.set(this.items[index], 'defaultValue', val[this.items[index].name])
+//                Vue.delete(val, this.items[index].name)
+              }
+            }
+          }
         },
         deep: true
       }
