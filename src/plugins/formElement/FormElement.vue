@@ -7,7 +7,7 @@
     <input
       v-if="options.type==='text'"
       type="text" class="form-control" :name="options.name" :placeholder="options.placeholder"
-      v-model="elementValue" ref="formElementEl" :readonly="options.locked"/>
+      v-model="elementValue" ref="formElementEl" :readonly="options.locked" @click="textClick"/>
     <input
       v-if="options.type==='button'"
       type="button" class="form-control" :name="options.name"
@@ -166,6 +166,9 @@
       clearSelect () {
         this.elementValue = undefined
         this.treeValue = undefined
+      },
+      textClick () {
+        this.options.clickEvent && this.options.clickEvent({[this.options.name]: this.elementValue})
       },
       buttonClick () {
         if (this.options.ruleChange) {

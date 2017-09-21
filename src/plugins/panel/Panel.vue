@@ -42,7 +42,9 @@
       border: 2px solid $base-background;
       border-radius: 5px;
       margin: 0 0 20px;
+      overflow: hidden;
       > header, > footer {
+        overflow: hidden;
         background: $base-background;
         color: $brand-primary;
         padding: 0 15px;
@@ -57,6 +59,9 @@
       }
       > footer {
         text-align: right;
+      }
+      > main {
+        overflow: hidden;
       }
     }
     .fade-enter-active, .fade-leave-active {
