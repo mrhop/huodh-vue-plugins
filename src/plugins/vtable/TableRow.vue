@@ -20,11 +20,15 @@
          @click.prevent="updateRow(row.key)">更新</a>
       <a v-if="action&&action.delete" class="btn btn-danger" v-on:click.prevent="deleteRow(row.key)">删除
       </a>
-      <router-link v-if="action&&action.others" class="btn btn-default"
-                   v-for="(item,key) in (action&&action.others||[])"
+      <router-link v-if="action&&action.routes" class="btn btn-default"
+                   v-for="(item,key) in (action&&action.routes||[])"
                    :key="key"
                    :to="{path:actionUrls[item.key],query:{key:row.key}}">{{item.label}}
       </router-link>
+      <a v-if="action&&action.events" class="btn btn-default"
+         v-for="(item,key) in (action&&action.events||[])"
+         :key="key" @click.prevent="dealCustomEvent(row.key,item.key)">{{item.label}}
+      </a>
     </td>
   </tr>
 </template>
@@ -67,6 +71,9 @@
           deleteUrl: this.actionUrls && this.actionUrls.deleteUrl,
           deleteAction: this.actions && this.actions.delete
         })
+      },
+      dealCustomEvent (key, methodName) {
+        this.actions && this.actions[methodName](key)
       }
     }, mapActions([
       'tableDeleteRow'
