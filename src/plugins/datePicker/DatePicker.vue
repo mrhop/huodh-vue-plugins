@@ -4,7 +4,7 @@
       <div class="input" @click="togglePanel"
            v-text="range ? valueFormat[0] + ' -- ' + valueFormat[1] : valueFormat"></div>
       <transition name="fade">
-        <span v-show="!readonly" class="cancel-btn" v-show="showCancel" @click="clear"/>
+        <span v-if="!readonly" class="cancel-btn" v-show="showCancel" @click="clear"/>
       </transition>
     </div>
     <transition name="toggle">

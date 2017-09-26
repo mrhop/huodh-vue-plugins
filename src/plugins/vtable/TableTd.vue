@@ -43,6 +43,7 @@
                     }
                   }
                   _this.showEdit = false
+                  _this.$emit('editedColumn')
                 }).catch(function (error) {
                   console.log(error + 'from table td editing')
                   Vue.set(_this.headerItem, 'defaultValue', this.itemLocal)

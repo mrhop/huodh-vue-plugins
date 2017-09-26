@@ -11,7 +11,7 @@
              :tdKey="key"
              :rowKey="row.key" :header="header"
              :hasSn="hasSn"
-             :actions="actions" :editable="editable"></tableTd>
+             :actions="actions" :editable="editable" v-on:editedColumn="editedColumn"></tableTd>
     <td class="td-actions">
       <router-link v-if="action&&action.update&&actionUrls&&actionUrls.infoUrl" class="btn btn-info"
                    :to="{path:actionUrls.infoUrl,query:{key:row.key}}">更新
@@ -55,6 +55,9 @@
     methods: lodash.assignIn({
       getRowNum () {
         return this.index + 1
+      },
+      editedColumn () {
+        this.$emit('editedColumn')
       },
       updateRow (key, event) {
         // 首先给出确认modal，然后进行del的fun调用操作,开始modal的处理了,尝试使用下filter处理item的值

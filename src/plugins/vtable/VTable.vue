@@ -27,7 +27,7 @@
         <tableBody :rows="rows" :action="action" :actions="actions" :editable="editable" :header="header"
                    :actionUrls="actionUrls"
                    :hasSn="hasSn"
-                   :tableId="id"/>
+                   :tableId="id" v-on:editedColumn="editedColumn"/>
         <tableFooter :feature="feature" :pager="pager" :totalCount="totalCount" :actionUrls="actionUrls"
                      :totalPage="totalPage" :currentPage="currentPage"
                      :colspan="header.length+1"/>
@@ -143,6 +143,13 @@
       },
       addRedirectAction () {
         this.actions && this.actions.addAction()
+      },
+      editedColumn () {
+        this.tableInit({
+          id: this.id,
+          listUrl: this.actionUrls && this.actionUrls.listUrl,
+          listAction: this.actions && this.actions.list
+        })
       }
     }, mapActions([
       'tableInit',

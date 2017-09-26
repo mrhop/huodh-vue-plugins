@@ -109,8 +109,12 @@ const setDefaultValues = function (items, tempForm) {
         items[key].defaultValue[items[key].name + i] = null
       }
     } else if (items[key].type === 'tree') {
-      items[key].defaultValue = items[key].defaultValue || undefined
-      items[key].defaultLabel = items[key].defaultLabel || undefined
+      if (!items[key].hasOwnProperty('defaultValue')) {
+        items[key].defaultValue = undefined
+      }
+      if (!items[key].hasOwnProperty('defaultLabel')) {
+        items[key].defaultLabel = undefined
+      }
       items[key].treeData = items[key].treeData || undefined
     } else if (items[key].type === 'tree-checkbox') {
       items[key].defaultValue = items[key].defaultValue || []
@@ -127,10 +131,10 @@ const setDefaultValues = function (items, tempForm) {
         if (!items[key].items) {
           items[key].items = []
         }
-        if (!items[key].defaultValue) {
+        if (!items[key].hasOwnProperty('defaultValue')) {
           items[key].defaultValue = undefined
         }
-      } else if (items[key].defaultValue === undefined || items[key].defaultValue === null) {
+      } else if (!items[key].hasOwnProperty('defaultValue')) {
         items[key].defaultValue = undefined
       }
     }
@@ -151,8 +155,12 @@ const setDefaultValue = function (item) {
       item.defaultValue[item.name + i] = null
     }
   } else if (item.type === 'tree') {
-    item.defaultValue = item.defaultValue || undefined
-    item.defaultLabel = item.defaultLabel || undefined
+    if (!item.hasOwnProperty('defaultValue')) {
+      item.defaultValue = undefined
+    }
+    if (!item.hasOwnProperty('defaultLabel')) {
+      item.defaultLabel = undefined
+    }
     item.treeData = item.treeData || undefined
   } else if (item.type === 'tree-checkbox') {
     item.defaultValue = item.defaultValue || []
@@ -169,10 +177,10 @@ const setDefaultValue = function (item) {
       if (!item.items) {
         item.items = []
       }
-      if (!item.defaultValue) {
+      if (!item.hasOwnProperty('defaultValue')) {
         item.defaultValue = undefined
       }
-    } else if (item.defaultValue === undefined || item.defaultValue === null) {
+    } else if (!item.hasOwnProperty('defaultValue')) {
       item.defaultValue = undefined
     }
   }
