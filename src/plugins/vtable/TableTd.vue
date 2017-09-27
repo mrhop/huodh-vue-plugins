@@ -25,59 +25,59 @@
     methods: {
       itemEdit (flag) {
         if (flag) {
-          if (this.actions && this.actions.edit) {
-            var returnData = this.actions.edit({key: this.rowKey, data: this.dataChanged, headerItem: this.headerItem})
-            if (returnData !== false) {
-              if (returnData instanceof Object && returnData.axiosConfig) {
-                let _this = this
-                axios.request(returnData.axiosConfig).then(function (response) {
-                  if (response.data && response.data.error) {
-                    console.log(response.data.error + 'from table td editing')
-                    Vue.set(_this.headerItem, 'defaultValue', this.itemLocal)
-                    Vue.set(_this.headerItem, 'init', true)
-                  } else if (response.data && response.data.success) {
-                    if (_this.headerItem.type === 'file' || _this.headerItem.type === 'image') {
-                      _this.itemLocal = response.data.success.data
-                    } else {
-                      _this.itemLocal = _this.headerItem.defaultValue
+          if (!this.headerItem.validatedMsg) {
+            if (this.actions && this.actions.edit) {
+              var returnData = this.actions.edit({
+                key: this.rowKey,
+                data: this.dataChanged,
+                headerItem: this.headerItem
+              })
+              if (returnData !== false) {
+                if (returnData instanceof Object && returnData.axiosConfig) {
+                  let _this = this
+                  axios.request(returnData.axiosConfig).then(function (response) {
+                    if (response.data && response.data.error) {
+                      console.log(response.data.error + 'from table td editing')
+                      Vue.set(_this.headerItem, 'defaultValue', this.itemLocal)
+                    } else if (response.data && response.data.success) {
+                      if (_this.headerItem.type === 'file' || _this.headerItem.type === 'image') {
+                        _this.itemLocal = response.data.success.data
+                      } else {
+                        _this.itemLocal = _this.headerItem.defaultValue
+                      }
                     }
-                  }
-                  _this.showEdit = false
-                  _this.$emit('editedColumn')
-                }).catch(function (error) {
-                  console.log(error + 'from table td editing')
-                  Vue.set(_this.headerItem, 'defaultValue', this.itemLocal)
-                  Vue.set(_this.headerItem, 'init', true)
-                  _this.showEdit = false
-                })
-              } else {
-                if (this.headerItem.type === 'file' || this.headerItem.type === 'image') {
-                  this.itemLocal = returnData
+                    _this.showEdit = false
+                    _this.$emit('editedColumn', _this.itemLocal, _this.tdKey)
+                  }).catch(function (error) {
+                    console.log(error + 'from table td editing')
+                    Vue.set(_this.headerItem, 'defaultValue', this.itemLocal)
+                    _this.showEdit = false
+                  })
                 } else {
-                  this.itemLocal = this.headerItem.defaultValue
+                  if (this.headerItem.type === 'file' || this.headerItem.type === 'image') {
+                    this.itemLocal = returnData
+                  } else {
+                    this.itemLocal = this.headerItem.defaultValue
+                  }
+                  this.showEdit = false
                 }
+              } else {
+                Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
                 this.showEdit = false
               }
             } else {
-              Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
-              Vue.set(this.headerItem, 'init', true)
+              this.itemLocal = this.headerItem.defaultValue
               this.showEdit = false
             }
-          } else {
-            this.itemLocal = this.headerItem.defaultValue
-            this.showEdit = false
           }
         } else {
           Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
-          Vue.set(this.headerItem, 'init', true)
           this.showEdit = false
         }
       },
       itemClick () {
         if (!this.showEdit && this.editable && this.headerItem.editable) {
           if (this.headerItem.type !== 'file' && this.headerItem.type !== 'image') {
-            Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
-            Vue.set(this.headerItem, 'init', true)
           }
           this.showEdit = true
         }
@@ -86,7 +86,6 @@
         if (!this.$el.contains(e.target) && this.showEdit) {
           this.showEdit = false
           Vue.set(this.headerItem, 'defaultValue', this.itemLocal)
-          Vue.set(this.headerItem, 'init', true)
         }
       },
       dataFormat (item) {
@@ -154,7 +153,6 @@
         let returnTmp = lodash.cloneDeep(this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey])
         if (this.item) {
           Vue.set(returnTmp, 'defaultValue', this.item)
-          Vue.set(returnTmp, 'init', true)
         }
         return returnTmp
       }
@@ -163,8 +161,6 @@
     watch: {
       item: function () {
         this.itemLocal = this.item
-      },
-      itemLocal: function () {
         this.dataFormated = this.dataFormat(this.itemLocal)
       }
     },

@@ -330,5 +330,13 @@
     }
   }
 
-
+  td {
+    .form-element {
+      &.has-error {
+        p.error {
+          line-height: 100%;
+        }
+      }
+    }
+  }
 </style>

@@ -45,6 +45,14 @@ export default {
           }
         }
         Vue.set(data.rules, 'headerConst', lodash.cloneDeep(data.rules.header))
+        for (let k in data.rules.headerConst) {
+          if (k < data.rules.headerConst.length) {
+            let item = data.rules.headerConst[k]
+            if (item.filter) {
+              delete item.validate
+            }
+          }
+        }
       }
       data.init = false
     }

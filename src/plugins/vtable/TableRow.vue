@@ -56,7 +56,8 @@
       getRowNum () {
         return this.index + 1
       },
-      editedColumn () {
+      editedColumn (data, key) {
+        this.row.value[key] = data
         this.$emit('editedColumn')
       },
       updateRow (key, event) {
