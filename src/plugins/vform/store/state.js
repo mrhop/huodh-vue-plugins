@@ -257,14 +257,12 @@ const utilfuns = {
         var itemTemp = data[j]
         if (!Array.isArray(item) && item.name === itemTemp.name) {
           item.init = true
-          Vue.set(item, 'validatedMsg', undefined)
           lodash.assign(item, itemTemp)
         } else if (Array.isArray(item)) {
           for (var k in item) {
             var subItem = item[k]
             if (subItem.name === itemTemp.name) {
               subItem.init = true
-              Vue.set(subItem, 'validatedMsg', undefined)
               lodash.assign(subItem, itemTemp)
             }
           }

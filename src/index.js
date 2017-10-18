@@ -7,6 +7,7 @@ import tree from './plugins/tree/Tree.vue'
 import vform from './plugins/vform/VForm.vue'
 import vtable from './plugins/vtable/VTable.vue'
 import datePicker from './plugins/datePicker/DatePicker.vue'
+import vchart from './plugins/vchart/VChart.vue'
 import generateStore from './store/index'
 import config from './plugins/config'
 
@@ -21,5 +22,6 @@ export default {
   tree,
   vform,
   vtable,
-  datePicker
+  datePicker,
+  vchart
 }

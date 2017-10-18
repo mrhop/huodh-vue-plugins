@@ -25,6 +25,7 @@
   "dependencies": {
     "axios": "^0.15.3",
     "bootstrap-vue": "^0.10.0-alpha.1",
+    "chart.js": "^2.7.0",
     "file": "^0.2.2",
     "fs": "0.0.1-security",
     "lodash": "^4.17.4",

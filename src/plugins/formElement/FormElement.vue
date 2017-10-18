@@ -76,7 +76,8 @@
               :placeholder="options.placeholder" :readonly="options.locked"/>
     <ckeditor v-else-if="options.type==='ckeditor'" :options="options"
               v-on:inputChange="dealWithCKeditor"/>
-    <datePicker v-else-if="options.type==='date'" :readonly="options.locked" :value="elementValue"
+    <datePicker v-else-if="options.type==='date'||options.type==='datetime'" :readonly="options.locked"
+                :value="elementValue"
                 v-on:input="dealWithDate" ref="formElementEl"/>
     <datePicker v-else-if="options.type==='daterange'" :range="true" :readonly="options.locked"
                 :value="elementValue"
@@ -145,7 +146,7 @@
       dealWithDate (value) {
         var parts
         if (value) {
-          if (this.options.type === 'date') {
+          if (this.options.type === 'date' || this.options.type === 'datetime') {
             parts = value.split('-')
             this.elementValue = new Date(parts[0], parts[1] - 1, parts[2]).getTime()
           } else if (this.options.type === 'daterange') {

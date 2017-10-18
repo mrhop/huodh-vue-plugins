@@ -42,6 +42,15 @@
           if ((date.getTime() - this.lastInputTime.getTime()) > 499) {
             let pager = this.pager
             let filters = this.filters
+            if (filters) {
+              for (let key in filters) {
+                if (filters.hasOwnProperty(key)) {
+                  if (!filters[key]) {
+                    delete filters[key]
+                  }
+                }
+              }
+            }
             let sorts = this.sorts
             this.tableGetList({
               id: this.tableId,

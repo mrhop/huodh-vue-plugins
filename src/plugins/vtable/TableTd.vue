@@ -93,8 +93,11 @@
         if (headerItem && item !== undefined && item !== null && !item.literal) {
           switch (headerItem.type) {
             case 'date':
-              var dateTmp = new Date(+item)
+              let dateTmp = new Date(+item)
               return `${dateTmp.getFullYear()}-${('0' + (dateTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTmp.getDate()).slice(-2)}`
+            case 'datetime':
+              let dateTimeTmp = new Date(+item)
+              return `${dateTimeTmp.getFullYear()}-${('0' + (dateTimeTmp.getMonth() + 1)).slice(-2)}-${('0' + dateTimeTmp.getDate()).slice(-2)} ${('0' + dateTimeTmp.getHours()).slice(-2)}:${('0' + dateTimeTmp.getMinutes()).slice(-2)}:${('0' + dateTimeTmp.getSeconds()).slice(-2)}`
             case 'file':
               var returnFiles = ``
               if (item instanceof Array) {
