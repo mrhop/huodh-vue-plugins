@@ -164,6 +164,8 @@
     watch: {
       item: function () {
         this.itemLocal = this.item
+        this.headerItem.defaultValue = this.item
+        this.headerItem.init = true
         this.dataFormated = this.dataFormat(this.itemLocal)
       }
     },
