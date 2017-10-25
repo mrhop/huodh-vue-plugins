@@ -45,7 +45,7 @@
             if (filters) {
               for (let key in filters) {
                 if (filters.hasOwnProperty(key)) {
-                  if (!filters[key]) {
+                  if (!filters[key] && filters[key] !== false) {
                     delete filters[key]
                   }
                 }

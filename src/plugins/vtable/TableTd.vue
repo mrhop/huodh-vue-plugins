@@ -102,11 +102,13 @@
               var returnFiles = ``
               if (item instanceof Array) {
                 for (let index in item) {
-                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+//                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  let fileName = 'file' + (index + 1)
                   returnFiles += `<a href='${item[index]}' target="_blank">${fileName}</a>`
                 }
               } else {
-                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+//                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                let fileName = 'file'
                 returnFiles += `<a href='${item}' target="_blank">${fileName}</a>`
               }
               return returnFiles
@@ -114,11 +116,13 @@
               var returnImages = ``
               if (item instanceof Array) {
                 for (let index in item) {
-                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+//                  let fileName = item[index].replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                  let fileName = 'image' + (index + 1)
                   returnImages += `<a href='${item[index]}' target="_blank">${fileName}<img src='${item[index]}'/></a>`
                 }
               } else {
-                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+//                let fileName = item.replace(/^.*[/\\]+(.*)\??.*$/, '$1')
+                let fileName = 'image'
                 returnImages += `<a href='${item}' target="_blank">${fileName}<img src='${item}'/></a>`
               }
               return returnImages
@@ -154,7 +158,7 @@
       },
       getHeaderItem () {
         let returnTmp = lodash.cloneDeep(this.header[this.hasSn ? (this.tdKey + 1) : this.tdKey])
-        if (this.item) {
+        if (this.item !== undefined && this.item !== null) {
           Vue.set(returnTmp, 'defaultValue', this.item)
         }
         return returnTmp
