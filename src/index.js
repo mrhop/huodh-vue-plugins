@@ -4,6 +4,7 @@ import panel from './plugins/panel/Panel.vue'
 import tab from './plugins/tab/Tab.vue'
 import tabTpl from './plugins/tabTpl/Tab.vue'
 import tree from './plugins/tree/Tree.vue'
+import formElement from './plugins/formElement/FormElement.vue'
 import vform from './plugins/vform/VForm.vue'
 import vtable from './plugins/vtable/VTable.vue'
 import datePicker from './plugins/datePicker/DatePicker.vue'
@@ -20,6 +21,7 @@ export default {
   tab,
   tabTpl,
   tree,
+  formElement,
   vform,
   vtable,
   datePicker,
