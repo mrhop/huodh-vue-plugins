@@ -20,6 +20,9 @@
     /* eslint-disable no-undef */
     mounted () {
       CKEDITOR.replace(this.id, this.options && this.options.config || config)
+      if (this.options.defaultValue) {
+        CKEDITOR.instances[this.id].setData(this.options.defaultValue)
+      }
       CKEDITOR.instances[this.id].on('change', function () {
         let data = CKEDITOR.instances[this.id].getData()
         this.$emit('inputChange', CKEDITOR.instances[this.id], data)
